@@ -1,0 +1,240 @@
+/* CSS Reset or Normalize */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background-color: white;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Global Link Styling */
+a {
+  color: #3498db;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #2980b9;
+}
+
+/* Global Heading Styles */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #1D2D50;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+h4 {
+  font-size: 1.5rem;
+}
+
+h5 {
+  font-size: 1.25rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+/* Global Paragraph Styles */
+p {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+/* Utility Classes for Spacing */
+.mt-10 { margin-top: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.pt-10 { padding-top: 10px; }
+.pb-20 { padding-bottom: 20px; }
+.px-20 { padding-left: 20px; padding-right: 20px; }
+
+/* Utility Class for Flex Centering */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Global Button Styles */
+button {
+  background-color: #1D2D50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #162240;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Global Input, Textarea, Select Styles */
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+  border: 3px solid #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Global Modal Styling */
+.modal, .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content, .lightbox-content {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+}
+
+.modal-content h3, .lightbox-content h3 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #1D2D50;
+}
+
+.modal-actions, .lightbox-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.modal-actions button, .lightbox-actions button {
+  background-color: #1D2D50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 10px;
+}
+
+.modal-actions button:hover, .lightbox-actions button:hover {
+  background-color: #162240;
+}
+
+/* Global Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #1D2D50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button.active {
+  background-color: #162240;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-section {
+      flex-direction: column;
+      text-align: center;
+  }
+
+  .content-section {
+      flex-direction: column;
+      margin-left: 0;
+  }
+
+  .sidebar {
+      width: 100%;
+      position: relative;
+  }
+
+  .sidebar ul li {
+      text-align: center;
+  }
+
+  .workload-section, .request-list {
+      width: 100%;
+  }
+}
+
+/* Global Transitions */
+* {
+  transition: all 0.3s ease;
+}

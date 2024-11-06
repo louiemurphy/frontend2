@@ -1,0 +1,68 @@
+/* Ensure the container takes full width and centers items */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 20px;
+  background-color: #f0f2f5; /* Light background */
+  color: #333;
+  width: 100%; /* Ensure full width */
+  justify-content: center; /* Centers the content */
+}
+
+/* Ensure the stats container fills the available width and centers items */
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%; /* Full width */
+}
+
+/* Stat box styles to ensure uniform width */
+.stat-box {
+  background-color: #fff; /* White background for cards */
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+  min-width: 160px; /* Ensure the boxes have minimum width */
+  transition: transform 0.2s ease; /* Animation for interaction */
+  width: 18%; /* Explicit width percentage for better responsiveness */
+}
+
+.stat-box:hover {
+  transform: translateY(-5px); /* Elevate on hover */
+}
+
+/* Stat headings */
+.stat-box h2 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #6c757d; /* Muted gray for headings */
+  margin-bottom: 10px;
+}
+
+/* Stat values */
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000; /* Bold black for main stats */
+  margin-bottom: 10px;
+}
+
+/* Placeholder for stat charts (optional) */
+.stat-chart {
+  width: 100%;
+  height: 80px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #6c757d; /* Placeholder color */
+}

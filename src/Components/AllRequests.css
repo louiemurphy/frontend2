@@ -1,0 +1,125 @@
+.all-requests-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto; /* Allow scrolling for content that overflows */
+    background-color: #f9f9f9;
+}
+
+.all-requests-page {
+    width: 100%;
+    margin: 0;
+    padding: 20px; /* Add some padding for aesthetics */
+}
+
+.all-requests-table-wrapper {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: calc(100vh - 80px); /* Adjust max height for the table */
+    width: 100%;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.all-requests-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px; /* Increased font size for better readability */
+}
+
+.all-requests-header-row th,
+.all-requests-row td {
+    padding: 10px 15px; /* Increased padding for more spacing */
+    border: 1px solid #d0d0d0;
+    text-align: left;
+    vertical-align: middle; /* Center align vertically */
+    white-space: normal; /* Allow wrapping of text */
+}
+
+.all-requests-header-row th {
+    background-color: #f3f3f3;
+    color: #333;
+    font-weight: bold;
+}
+
+.all-requests-row:nth-child(even) {
+    background-color: #f7f7f7;
+}
+
+.all-requests-row:hover {
+    background-color: #e8e8e8; /* Change on hover for better interactivity */
+}
+
+/* Specific styles for Project Title column */
+.all-requests-table th:nth-child(6),
+.all-requests-table td:nth-child(6) {
+    max-width: 500px; /* Increased maximum width for more spacing */
+    min-width: 230px; /* Adjusted minimum width */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break words when needed */
+}
+
+/* Specific styles for Request Type column */
+.all-requests-table th:nth-child(9),
+.all-requests-table td:nth-child(9) {
+    max-width: 250px; /* Adjusted width for better spacing */
+    min-width: 150px; /* Adjusted minimum width */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break words when needed */
+}
+/* Specific styles for Request Type column */
+.all-requests-table th:nth-child(3),
+.all-requests-table td:nth-child(3) {
+    max-width: 300px; /* Adjusted width for better spacing */
+    min-width: 100px; /* Adjusted minimum width */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break words when needed */
+}
+
+/* Specific styles for Date Needed column */
+.all-requests-table th:nth-child(10),
+.all-requests-table td:nth-child(10) {
+    max-width: 200px; /* Set a maximum width */
+    min-width: 110px; /* Set a minimum width */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break words when needed */
+}
+
+/* Specific styles for From Requester column */
+.all-requests-table th:nth-child(11),
+.all-requests-table td:nth-child(11) {
+    max-width: 200px; /* Set a maximum width */
+    min-width: 120px; /* Set a minimum width */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break words when needed */
+}
+
+.all-requests-table button {
+    padding: 6px 12px; /* Slightly larger padding for buttons */
+    font-size: 14px; /* Button font size */
+    background-color: #007BFF; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* Remove border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.all-requests-table button:hover {
+    background-color: #0056b3; /* Darker background on hover */
+}
+
+/* Add media queries for responsiveness */
+@media (max-width: 768px) {
+    .all-requests-table th,
+    .all-requests-table td {
+        font-size: 12px; /* Smaller font size on mobile */
+        padding: 8px 10px; /* Reduced padding on mobile */
+    }
+
+    .all-requests-table {
+        font-size: 12px; /* Reduce overall font size for smaller screens */
+    }
+}

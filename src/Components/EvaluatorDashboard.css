@@ -1,0 +1,404 @@
+/* CSS Reset and Base Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Layout */
+  .dashboard-container4 {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f5f6fa;
+    padding: 20px;
+    gap: 40px;
+  }
+  
+/* Profile Sidebar */
+.profile-sidebar4 {
+  width: 300px;
+  height: 100vh;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Profile Image Container */
+.profile-image-container4 {
+  width: 160px;
+  height: 160px;
+  border: 4px solid #1a73e8;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.profile-image-container4:hover {
+  border-color: #0056b3;
+}
+
+/* Profile Image */
+.profile-image4 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Camera Icon */
+.camera-icon-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  font-size: 28px;
+  color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Profile Details */
+.profile-details4 {
+  text-align: center;
+  width: 100%;
+}
+
+.profile-details4 h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Buttons */
+.profile-details4 button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button {
+  background-color: #1a73e8;
+  color: #fff;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.save-button:hover {
+  background-color: #388e3c;
+}
+
+.cancel-button {
+  background-color: #e57373;
+  color: #fff;
+}
+
+.cancel-button:hover {
+  background-color: #d32f2f;
+}
+
+
+
+
+  /* Main Content Area */
+  .main-content4 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-width: 0; /* Prevent flex item from overflowing */
+  }
+  
+  /* Status Cards */
+  .status-summary4 {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .status-box4 {
+    flex: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+  
+  .status-value4 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 12px;
+  }
+  
+  .status-box4 h3 {
+    font-size: 16px;
+    color: #343a40;
+    margin: 0;
+  }
+  
+  /* Table Section */
+  .table-container4 {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    max-height: 700px;
+    overflow-y: auto;
+  }
+  
+  /* Month Filter */
+  .month-filter-container {
+    margin-bottom: 5px;
+  }
+  
+  .month-filter-container select {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 170px;
+    background-color: #fff;
+  }
+  
+  /* Table Styles */
+  .request-table4 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+  }
+  
+  .request-table4 th,
+  .request-table4 td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+  }
+  
+  .request-table4 th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .request-table4 tr {
+    height: 30px;
+  }
+  
+  .request-table4 tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Table Column Widths */
+  .request-table4 th:nth-child(1),
+  .request-table4 td:nth-child(1) { width: 5%; }
+  
+  .request-table4 th:nth-child(2),
+  .request-table4 td:nth-child(2) { width: 10%; }
+  
+  .request-table4 th:nth-child(3),
+  .request-table4 td:nth-child(3) { width: 30%; }
+  
+  .request-table4 th:nth-child(4),
+  .request-table4 td:nth-child(4),
+  .request-table4 th:nth-child(5),
+  .request-table4 td:nth-child(5) { width: 15%; }
+  
+  /* Pagination */
+  .pagination3 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .pagination3 button {
+    background-color: #007bff;
+    color: white;
+    padding: 6px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .pagination3 button:hover {
+    background-color: #0056b3;
+  }
+  
+  .pagination3 button:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+  }
+  
+  .pagination3 span {
+    font-size: 12px;
+    font-weight: bold;
+  }
+  
+  /* Modal Styles */
+  .modal4 {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8); /* Darker background for better visibility */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+  }
+  
+  /* Modal Content: full screen with padding */
+  .modal-content4 {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100vw; /* Reduced width to 80% */
+    height: 100vh; /* Reduced height to 80% */
+    overflow-y: auto; /* Scrollable if content overflows */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Deep shadow for emphasis */
+  }
+  
+  .modal-header4 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333; /* Darker text for clarity */
+  }
+  
+  /* Modal Table */
+  .modal-table4 {
+    width: 100%; /* Keep the width to fill the modal */
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 14px; /* Reduced font size for table content */
+  }
+  
+  .modal-table4 th,
+  .modal-table4 td {
+    padding: 8px 12px; /* Reduced padding for smaller spacing */
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .modal-table4 th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333; /* Better contrast for headers */
+  }
+  
+  /* Button Styling */
+  .modal-table4 td button {
+    padding: 6px 12px; /* Reduced padding for buttons */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .modal-table4 td button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Upload button and input styling */
+  .modal-table4 td input[type="file"] {
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .modal-table4 td button[type="upload"] {
+    margin-top: 10px;
+    padding: 6px 12px; /* Reduced padding for the upload button */
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .modal-table4 td button[type="upload"]:hover {
+    background-color: #218838;
+  }
+  
+  /* Close button styling */
+  .close-modal-btn {
+    padding: 8px 16px; /* Reduced padding */
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .close-modal-btn:hover {
+    background-color: #c82333;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .modal-content4 {
+      width: 100vw; /* Full width on smaller screens */
+      height: 100vh; /* Full height on smaller screens */
+      padding: 20px;
+      border-radius: 0; /* Remove border radius on mobile */
+    }
+  
+    .modal-header4 {
+      font-size: 18px;
+    }
+  
+    .modal-table4 th, 
+    .modal-table4 td {
+      font-size: 12px; /* Smaller font size for mobile */
+      padding: 6px 8px; /* Reduced padding for mobile */
+    }
+  
+    .close-modal-btn {
+      padding: 6px 12px;
+    }
+  }
+  

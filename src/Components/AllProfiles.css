@@ -1,0 +1,98 @@
+.all-profiles-container {
+    padding: 15px;
+    max-width: 1000px; /* Reduced width to fit smaller screens */
+    margin: auto;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em; /* Reduced font size */
+    font-weight: bold;
+    color: #333;
+}
+
+.profiles-grid1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Reduced gap */
+    justify-content: center;
+}
+
+.card1 {
+    background-color: #ffffff;
+    border: none;
+    padding: 15px; /* Reduced padding */
+    width: 100%; /* Make full width for smaller screens */
+    max-width: 300px; /* Reduced card width */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.details {
+    margin-bottom: 10px; /* Reduced margin */
+}
+
+.profile-name {
+    font-size: 1.2em; /* Reduced font size */
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: bold;
+}
+
+.task-stats {
+    font-size: 0.9em; /* Reduced font size */
+    margin: 5px 0;
+    color: #555;
+}
+
+.task-stats span {
+    font-weight: bold;
+    color: #000;
+}
+
+.completion {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.icon {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+.completion-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.completion-rate {
+    font-size: 1.1em;
+    color: green;
+    margin-left: 5px;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .profiles-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%; /* Adjust card size for smaller screens */
+    }
+}

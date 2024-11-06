@@ -1,0 +1,83 @@
+/* Sidebar Styling */
+.sidebar {
+    background: #2b3e50; /* Solid, more subtle background */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px; /* Adjusted width */
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sidebar Title */
+.sidebar-title {
+    font-size: 1.6em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #ecf0f1;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* Menu List */
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* Menu Item Styling */
+.menu-item {
+    display: flex; 
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 1em;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+    width: 100%;
+}
+
+/* Menu Icon Styling */
+.menu-icon {
+    margin-right: 8px;
+    font-size: 1em;
+    color: #bdc3c7;
+}
+
+/* Hover Effect for Menu Item */
+.menu-item:hover {
+    background-color: #4d5c6a;
+}
+
+/* Active State for Menu Item */
+.menu-item.active {
+    background-color: #3c8e7e;
+    color: #ffffff;
+}
+
+/* Responsive Adjustment for Smaller Screens */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 180px; /* Reduced width for smaller screens */
+    }
+
+    .sidebar-title {
+        font-size: 1.4em;
+    }
+
+    .menu-item {
+        font-size: 0.9em;
+    }
+
+    .menu-icon {
+        font-size: 0.9em;
+    }
+}
