@@ -36,7 +36,7 @@ function EvaluatorDashboard() {
         const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/teamMembers/${evaluatorId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-        if (data.profileImage) setProfileImage(`https://backend2-4-ppp6.onrender.com/${data.profileImage}`);
+        if (data.profileImage) setProfileImage(`http://localhost:5000${data.profileImage}`);
       } catch (err) {
         console.error(err.message);
       }
@@ -103,7 +103,7 @@ function EvaluatorDashboard() {
     const completedAt = newStatus === 2 ? new Date().toISOString() : null;
 
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com//api/requests/${requestId}`, {
+      const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ function EvaluatorDashboard() {
       formData.append('requestId', selectedRequest._id);
 
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com//api/upload', {
+        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/upload', {
           method: 'POST',
           body: formData,
         });

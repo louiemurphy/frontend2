@@ -346,30 +346,35 @@ function AdminDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
+      // Ensure fileUrl is a valid path on your server
       const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/pdf',
-        },
       });
-
+  
+      // Check for HTTP errors
       if (!response.ok) {
-        throw new Error('Failed to download file');
+        // Log the status and statusText for debugging
+        console.error(`Download failed: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to download file: ${response.statusText}`);
       }
-
+  
+      // Convert the response to a Blob
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute('download', fileName);
+      link.setAttribute('download', fileName); // Name the file when downloaded
       document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(downloadUrl);
+      link.click(); // Simulate click to trigger download
+      link.remove(); // Clean up the DOM
+      window.URL.revokeObjectURL(downloadUrl); // Release the object URL
     } catch (error) {
+      // Log error for debugging
       console.error('Error downloading file:', error);
+      alert(`Download failed: ${error.message}`); // Provide user feedback
     }
   };
+  
 
   // Filter requests by selected month and search query
   // Filter requests by selected month and search query, and sort by newest first
