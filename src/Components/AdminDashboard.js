@@ -346,34 +346,35 @@ function AdminDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      // Ensure fileUrl is a valid path on your server
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
+      // Ensure fileUrl starts with a single "/" to form a valid path
+      const formattedFileUrl = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
+      const response = await fetch(`https://backend2-4-ppp6.onrender.com${formattedFileUrl}`, {
         method: 'GET',
       });
   
-      // Check for HTTP errors
+      // Check for HTTP errors and log details for debugging
       if (!response.ok) {
-        // Log the status and statusText for debugging
         console.error(`Download failed: ${response.status} ${response.statusText}`);
         throw new Error(`Failed to download file: ${response.statusText}`);
       }
   
-      // Convert the response to a Blob
+      // Convert the response to a Blob and create a temporary URL
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute('download', fileName); // Name the file when downloaded
+      link.setAttribute('download', fileName); // Sets the download attribute with the file name
       document.body.appendChild(link);
-      link.click(); // Simulate click to trigger download
+      link.click(); // Trigger the download
       link.remove(); // Clean up the DOM
-      window.URL.revokeObjectURL(downloadUrl); // Release the object URL
+      window.URL.revokeObjectURL(downloadUrl); // Release the object URL to free up memory
     } catch (error) {
-      // Log error for debugging
+      // Log error and alert the user
       console.error('Error downloading file:', error);
-      alert(`Download failed: ${error.message}`); // Provide user feedback
+      alert(`Download failed: ${error.message}`);
     }
   };
+  
   
 
   // Filter requests by selected month and search query

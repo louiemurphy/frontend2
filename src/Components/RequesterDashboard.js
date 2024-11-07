@@ -255,33 +255,36 @@ function RequesterDashboard() {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com/${fileUrl}`, {
+      // Ensure fileUrl starts with a single "/"
+      const formattedFileUrl = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
+      const response = await fetch(`https://backend2-4-ppp6.onrender.com${formattedFileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type
         },
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to download file');
       }
-
-      const blob = await response.blob(); // Get the response as a Blob
-      const downloadUrl = window.URL.createObjectURL(blob); // Create a temporary URL
-
-      // Create an anchor element to trigger the download
+  
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+  
+      // Trigger download
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute('download', fileName); // Set the download attribute with the file name
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
-      link.click(); // Programmatically click the link to download the file
-      link.remove(); // Clean up the link
-
-      window.URL.revokeObjectURL(downloadUrl); // Free up memory after download
+      link.click();
+      link.remove();
+  
+      window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       console.error('Error downloading file:', error);
     }
   };
+  
 
   // Show loading state
   if (loading) {

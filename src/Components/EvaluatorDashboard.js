@@ -36,7 +36,7 @@ function EvaluatorDashboard() {
         const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/teamMembers/${evaluatorId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-        if (data.profileImage) setProfileImage(`http://localhost:5000${data.profileImage}`);
+        if (data.profileImage) setProfileImage(`https://backend2-4-ppp6.onrender.com${data.profileImage}`);
       } catch (err) {
         console.error(err.message);
       }
@@ -85,7 +85,7 @@ function EvaluatorDashboard() {
 
         if (!response.ok) throw new Error('Failed to upload profile image');
         const result = await response.json();
-        setProfileImage(`https://backend2-4-ppp6.onrender.com/${result.filePath}`);
+        setProfileImage(`https://backend2-4-ppp6.onrender.com${result.filePath}`);
         alert('Profile image updated successfully!');
       } catch (error) {
         alert(`Profile upload failed: ${error.message}`);
@@ -169,14 +169,17 @@ function EvaluatorDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com/${fileUrl}`, {
+      const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
         method: 'GET',
       });
-
+  
       if (!response.ok) {
+        // Log the actual response for debugging
+        const errorResponse = await response.text(); // Get the text response for debugging
+        console.error('Download failed with response:', errorResponse);
         throw new Error('Failed to download file');
       }
-
+  
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -190,6 +193,7 @@ function EvaluatorDashboard() {
       alert(`Download failed: ${error.message}`);
     }
   };
+  
 
   const getMonthNumber = (monthName) => {
     const months = {
