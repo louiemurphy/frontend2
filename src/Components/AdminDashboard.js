@@ -163,41 +163,47 @@ function RequestList({
         </tr>
       </thead>
       <tbody>
-        {currentRequests.map((request) => (
-          <tr key={request._id} onClick={() => openModal(request)}>
-            <td>{request.referenceNumber}</td>
-            <td>{request.timestamp}</td>
-            <td>{request.projectTitle}</td>
-            <td>{request.assignedTo || 'Unassigned'}</td>
-            <td>
-              <select
-                value={request.status}
-                onChange={(e) => handleStatusChange(request._id, Number(e.target.value))}
-                onClick={(e) => e.stopPropagation()}
-                disabled={request.status === 2}
-              >
-                <option value={0}>Pending</option>
-                <option value={1}>Ongoing</option>
-                <option value={2}>Completed</option>
-                <option value={3}>Cancelled</option>
-              </select>
-            </td>
-            <td>
-              <button
-                className="assign-button2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openOverlay(request);
-                }}
-              >
-                Assign
-              </button>
-            </td>
-            <td>{request.completedAt ? new Date(request.completedAt).toLocaleString() : 'N/A'}</td>
+  {currentRequests.map((request) => (
+    <tr key={request._id} onClick={() => openModal(request)}>
+      <td>{request.referenceNumber}</td>
+      <td>{request.timestamp}</td>
+      <td>{request.projectTitle}</td>
+      <td>{request.assignedTo || 'Unassigned'}</td>
+      <td>
+        <select
+          value={request.status}
+          onChange={(e) => handleStatusChange(request._id, Number(e.target.value))}
+          onClick={(e) => e.stopPropagation()}
+          disabled={request.status === 2 || request.status === 3} // Disable for both completed and canceled
+        >
+          <option value={0}>Pending</option>
+          <option value={1}>Ongoing</option>
+          <option value={2}>Completed</option>
+          <option value={3}>Cancelled</option>
+        </select>
+      </td>
+      <td>
+        <button
+          className="assign-button2"
+          onClick={(e) => {
+            e.stopPropagation();
+            openOverlay(request);
+          }}
+        >
+          Assign
+        </button>
+      </td>
+      <td>
+        {request.status === 2 && request.completedAt
+          ? new Date(request.completedAt).toLocaleString() // Show completion date
+          : request.status === 3 && request.canceledAt
+          ? new Date(request.canceledAt).toLocaleString() // Show cancellation date
+          : 'N/A'}
+      </td>
+    </tr>
+  ))}
+</tbody>
 
-          </tr>
-        ))}
-      </tbody>
     </table>
 </div>
 
@@ -242,7 +248,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests', { mode: 'cors' });
+        const response = await fetch('http://localhost:5000/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
@@ -288,7 +294,7 @@ function AdminDashboard() {
       setRequests(updatedRequests);
 
       try {
-        const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests/${selectedRequest._id}`, {
+        const response = await fetch(`http://localhost:5000/api/requests/${selectedRequest._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -311,7 +317,7 @@ function AdminDashboard() {
 
   const handleStatusChange = async (requestId, newStatus) => {
     const completedAt = newStatus === 2 ? new Date().toISOString() : null;
-    const cancelledAt = newStatus === 3 ? new Date().toISOString() : null; // Handle the cancelled timestamp
+    const cancelledAt = newStatus === 3 ? new Date().toISOString() : null;
   
     try {
       const updatedRequests = requests.map((request) =>
@@ -319,10 +325,10 @@ function AdminDashboard() {
       );
       setRequests(updatedRequests);
   
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests/${requestId}`, {
+      const response = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus, completedAt, cancelledAt }),
+        body: JSON.stringify({ status: newStatus, completedAt, cancelledAt }), // Send both dates
       });
   
       if (!response.ok) {
@@ -332,6 +338,8 @@ function AdminDashboard() {
       console.error('Error updating status:', err);
     }
   };
+  
+  
   
 
   const openModal = (request) => {
@@ -346,36 +354,30 @@ function AdminDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      // Ensure fileUrl starts with a single "/" to form a valid path
-      const formattedFileUrl = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${formattedFileUrl}`, {
+      const response = await fetch(`http://localhost:5000${fileUrl}`, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf',
+        },
       });
-  
-      // Check for HTTP errors and log details for debugging
+
       if (!response.ok) {
-        console.error(`Download failed: ${response.status} ${response.statusText}`);
-        throw new Error(`Failed to download file: ${response.statusText}`);
+        throw new Error('Failed to download file');
       }
-  
-      // Convert the response to a Blob and create a temporary URL
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute('download', fileName); // Sets the download attribute with the file name
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
-      link.click(); // Trigger the download
-      link.remove(); // Clean up the DOM
-      window.URL.revokeObjectURL(downloadUrl); // Release the object URL to free up memory
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
-      // Log error and alert the user
       console.error('Error downloading file:', error);
-      alert(`Download failed: ${error.message}`);
     }
   };
-  
-  
 
   // Filter requests by selected month and search query
   // Filter requests by selected month and search query, and sort by newest first

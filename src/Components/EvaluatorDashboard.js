@@ -33,10 +33,10 @@ function EvaluatorDashboard() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/teamMembers/${evaluatorId}`);
+        const response = await fetch(`http://localhost:5000/api/teamMembers/${evaluatorId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-        if (data.profileImage) setProfileImage(`https://backend2-4-ppp6.onrender.com${data.profileImage}`);
+        if (data.profileImage) setProfileImage(`http://localhost:5000${data.profileImage}`);
       } catch (err) {
         console.error(err.message);
       }
@@ -44,7 +44,7 @@ function EvaluatorDashboard() {
 
     const fetchRequests = async () => {
       try {
-        const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests?assignedTo=${teamMember}`);
+        const response = await fetch(`http://localhost:5000/api/requests?assignedTo=${teamMember}`);
         if (!response.ok) throw new Error('Failed to fetch requests');
         const data = await response.json();
         setRequests(data);
@@ -78,14 +78,14 @@ function EvaluatorDashboard() {
       formData.append('evaluatorId', evaluatorId);
 
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/uploadProfile', {
+        const response = await fetch('http://localhost:5000/api/uploadProfile', {
           method: 'POST',
           body: formData,
         });
 
         if (!response.ok) throw new Error('Failed to upload profile image');
         const result = await response.json();
-        setProfileImage(`https://backend2-4-ppp6.onrender.com${result.filePath}`);
+        setProfileImage(`http://localhost:5000${result.filePath}`);
         alert('Profile image updated successfully!');
       } catch (error) {
         alert(`Profile upload failed: ${error.message}`);
@@ -103,7 +103,7 @@ function EvaluatorDashboard() {
     const completedAt = newStatus === 2 ? new Date().toISOString() : null;
 
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests/${requestId}`, {
+      const response = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ function EvaluatorDashboard() {
       formData.append('requestId', selectedRequest._id);
 
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/upload', {
+        const response = await fetch('http://localhost:5000/api/upload', {
           method: 'POST',
           body: formData,
         });
@@ -169,17 +169,14 @@ function EvaluatorDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
+      const response = await fetch(`http://localhost:5000${fileUrl}`, {
         method: 'GET',
       });
-  
+
       if (!response.ok) {
-        // Log the actual response for debugging
-        const errorResponse = await response.text(); // Get the text response for debugging
-        console.error('Download failed with response:', errorResponse);
         throw new Error('Failed to download file');
       }
-  
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -193,7 +190,6 @@ function EvaluatorDashboard() {
       alert(`Download failed: ${error.message}`);
     }
   };
-  
 
   const getMonthNumber = (monthName) => {
     const months = {
@@ -342,7 +338,14 @@ function EvaluatorDashboard() {
                         <option value={3}>Canceled</option> 
                       </select>
                     </td>
-                    <td>{req.completedAt ? new Date(req.completedAt).toLocaleString() : 'N/A'}</td>
+                    <td>
+  {req.status === 2 && req.completedAt // Show completedAt if status is "Completed"
+    ? new Date(req.completedAt).toLocaleString()
+    : req.status === 3 && req.canceledAt // Show canceledAt if status is "Canceled"
+    ? new Date(req.canceledAt).toLocaleString()
+    : 'N/A'}
+</td>
+
                   </tr>
                 ))
               ) : (

@@ -50,7 +50,7 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests');
+      const response = await fetch('http://localhost:5000/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
@@ -166,7 +166,7 @@ function RequesterDashboard() {
     if (validateForm()) {
         try {
             // Step 1: Create the request first (without file data)
-            const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests', {
+            const response = await fetch('http://localhost:5000/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
@@ -184,7 +184,7 @@ function RequesterDashboard() {
                 formData.append('file', selectedFile); // Attach the selected file
                 formData.append('requestId', newRequest._id); // Attach the newly created request ID
 
-                const uploadResponse = await fetch('https://backend2-4-ppp6.onrender.com/api/requester/upload', {
+                const uploadResponse = await fetch('http://localhost:5000/api/requester/upload', {
                     method: 'POST',
                     body: formData, // Send the file and requestId as FormData
                 });
@@ -255,36 +255,33 @@ function RequesterDashboard() {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      // Ensure fileUrl starts with a single "/"
-      const formattedFileUrl = fileUrl.startsWith('/') ? fileUrl : `/${fileUrl}`;
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${formattedFileUrl}`, {
+      const response = await fetch(`http://localhost:5000${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type
         },
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to download file');
       }
-  
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
-  
-      // Trigger download
+
+      const blob = await response.blob(); // Get the response as a Blob
+      const downloadUrl = window.URL.createObjectURL(blob); // Create a temporary URL
+
+      // Create an anchor element to trigger the download
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.setAttribute('download', fileName);
+      link.setAttribute('download', fileName); // Set the download attribute with the file name
       document.body.appendChild(link);
-      link.click();
-      link.remove();
-  
-      window.URL.revokeObjectURL(downloadUrl);
+      link.click(); // Programmatically click the link to download the file
+      link.remove(); // Clean up the link
+
+      window.URL.revokeObjectURL(downloadUrl); // Free up memory after download
     } catch (error) {
       console.error('Error downloading file:', error);
     }
   };
-  
 
   // Show loading state
   if (loading) {
@@ -375,19 +372,36 @@ function RequesterDashboard() {
       </tr>
     </thead>
     <tbody>
-      {currentRequests.map((request) => (
-        <tr key={request._id} onClick={() => handleRowClick(request)}>
-          <td>{request.referenceNumber}</td>
-          <td>{request.name}</td>
-          <td>{request.timestamp}</td>
-          <td>{request.projectTitle}</td>
-          <td>{request.assignedTo || 'Unassigned'}</td>
-          <td>{request.status === 1 ? 'Ongoing' : request.status === 2 ? 'Complete' : 'Pending'}</td>
-          <td>{request.status === 2 ? new Date(request.completedAt).toLocaleString() : 'N/A'}</td>
+  {currentRequests.map((request) => (
+    <tr key={request._id} onClick={() => handleRowClick(request)}>
+      <td>{request.referenceNumber}</td>
+      <td>{request.name}</td>
+      <td>{request.timestamp}</td>
+      <td>{request.projectTitle}</td>
+      <td>{request.assignedTo || 'Unassigned'}</td>
+      <td>
+        {request.status === 1
+          ? 'Ongoing'
+          : request.status === 2
+          ? 'Complete'
+          : request.status === 3
+          ? 'Cancelled'
+          : 'Pending'}
+      </td>
+      <td>
+  {request.status === 2 && request.completedAt
+    ? new Date(request.completedAt).toLocaleString()
+    : request.status === 3 && request.canceledAt // Ensure spelling consistency: canceledAt
+    ? new Date(request.canceledAt).toLocaleString()
+    : 'N/A'}
+</td>
 
-        </tr>
-      ))}
-    </tbody>
+    </tr>
+  ))}
+</tbody>
+
+
+
   </table>
 </div>
             </div>
@@ -458,14 +472,34 @@ function RequesterDashboard() {
                         </tr>
                       )}
                       <tr>
-                        <th>Status</th>
-                        <td>{selectedRequest.status === 1 ? 'Ongoing' : selectedRequest.status === 2 ? 'Complete' : 'Pending'}</td>
-                      </tr>
                       <tr>
-                        <th>Date Completed</th> 
-                        <td>{selectedRequest.status === 2 ? new Date(selectedRequest.completedAt).toLocaleString() : 'N/A'}</td>
+  <th>Status</th>
+  <td>
+    {selectedRequest.status === 1
+      ? 'Ongoing'
+      : selectedRequest.status === 2
+      ? 'Complete'
+      : selectedRequest.status === 3
+      ? 'Cancelled'
+      : 'Pending'}
+  </td>
+</tr>
+
 
                       </tr>
+                      <tr>
+  <th>Date Completed</th>
+  <td>
+    {selectedRequest.status === 2 && selectedRequest.completedAt
+      ? new Date(selectedRequest.completedAt).toLocaleString()
+      : selectedRequest.status === 3 && selectedRequest.cancelledAt
+      ? new Date(selectedRequest.cancelledAt).toLocaleString()
+      : 'N/A'}
+  </td>
+</tr>
+
+
+
                     </tbody>
                   </table>
                   <button onClick={closeModal} className="close-modal-btn">Close</button>
