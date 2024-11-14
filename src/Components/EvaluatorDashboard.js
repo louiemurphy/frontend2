@@ -33,10 +33,10 @@ function EvaluatorDashboard() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/teamMembers/${evaluatorId}`);
+        const response = await fetch(`https://backend2-production-2011.up.railway.app/api/teamMembers/${evaluatorId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
-        if (data.profileImage) setProfileImage(`https://backend2-4-ppp6.onrender.com${data.profileImage}`);
+        if (data.profileImage) setProfileImage(`https://backend2-production-2011.up.railway.app${data.profileImage}`);
       } catch (err) {
         console.error(err.message);
       }
@@ -44,7 +44,7 @@ function EvaluatorDashboard() {
 
     const fetchRequests = async () => {
       try {
-        const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests?assignedTo=${teamMember}`);
+        const response = await fetch(`https://backend2-production-2011.up.railway.app/api/requests?assignedTo=${teamMember}`);
         if (!response.ok) throw new Error('Failed to fetch requests');
         const data = await response.json();
         setRequests(data);
@@ -78,14 +78,14 @@ function EvaluatorDashboard() {
       formData.append('evaluatorId', evaluatorId);
 
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/uploadProfile', {
+        const response = await fetch('https://backend2-production-2011.up.railway.app/api/uploadProfile', {
           method: 'POST',
           body: formData,
         });
 
         if (!response.ok) throw new Error('Failed to upload profile image');
         const result = await response.json();
-        setProfileImage(`https://backend2-4-ppp6.onrender.com${result.filePath}`);
+        setProfileImage(`https://backend2-production-2011.up.railway.app${result.filePath}`);
         alert('Profile image updated successfully!');
       } catch (error) {
         alert(`Profile upload failed: ${error.message}`);
@@ -103,7 +103,7 @@ function EvaluatorDashboard() {
     const completedAt = newStatus === 2 ? new Date().toISOString() : null;
 
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com/api/requests/${requestId}`, {
+      const response = await fetch(`https://backend2-production-2011.up.railway.app/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ function EvaluatorDashboard() {
       formData.append('requestId', selectedRequest._id);
 
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/upload', {
+        const response = await fetch('https://backend2-production-2011.up.railway.app/api/upload', {
           method: 'POST',
           body: formData,
         });
@@ -169,7 +169,7 @@ function EvaluatorDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
+      const response = await fetch(`https://backend2-production-2011.up.railway.app${fileUrl}`, {
         method: 'GET',
       });
 

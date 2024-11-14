@@ -50,7 +50,7 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests');
+      const response = await fetch('https://backend2-production-2011.up.railway.app/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
@@ -166,7 +166,7 @@ function RequesterDashboard() {
     if (validateForm()) {
         try {
             // Step 1: Create the request first (without file data)
-            const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests', {
+            const response = await fetch('https://backend2-production-2011.up.railway.app/api/requests', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
@@ -184,7 +184,7 @@ function RequesterDashboard() {
                 formData.append('file', selectedFile); // Attach the selected file
                 formData.append('requestId', newRequest._id); // Attach the newly created request ID
 
-                const uploadResponse = await fetch('https://backend2-4-ppp6.onrender.com/api/requester/upload', {
+                const uploadResponse = await fetch('https://backend2-production-2011.up.railway.app/api/requester/upload', {
                     method: 'POST',
                     body: formData, // Send the file and requestId as FormData
                 });
@@ -255,7 +255,7 @@ function RequesterDashboard() {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`https://backend2-4-ppp6.onrender.com${fileUrl}`, {
+      const response = await fetch(`https://backend2-production-2011.up.railway.app${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type
