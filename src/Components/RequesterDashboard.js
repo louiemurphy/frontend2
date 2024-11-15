@@ -376,7 +376,7 @@ function RequesterDashboard() {
     <tr key={request._id} onClick={() => handleRowClick(request)}>
       <td>{request.referenceNumber}</td>
       <td>{request.name}</td>
-      <td>{request.timestamp}</td>
+      <td>{new Date(request.timestamp).toLocaleString()}</td>
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
