@@ -74,7 +74,7 @@ function Supplier() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/suppliers', newSupplier);
+      const response = await axios.post('https://backend2-production-2011.up.railway.app/api/suppliers', newSupplier);
       const formattedSupplier = {
         ...response.data,
         timestamp: moment(response.data.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
