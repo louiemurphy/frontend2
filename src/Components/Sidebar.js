@@ -1,7 +1,7 @@
 // Components/Sidebar.js
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; 
-import { FaTachometerAlt, FaUserFriends, FaListAlt } from 'react-icons/fa'; 
+import { FaTachometerAlt, FaUserFriends, FaListAlt, FaWarehouse, FaPlus } from 'react-icons/fa';
 import './Sidebar.css';
 
 function Sidebar() {
@@ -17,21 +17,35 @@ function Sidebar() {
           onClick={() => navigate('/dashboard')}
         >
           <FaTachometerAlt className="menu-icon" />
-          DASHBOARD
+          Dashboard
         </li>
         <li
           className={`menu-item ${location.pathname === '/profiles' ? 'active' : ''}`}
           onClick={() => navigate('/profiles')}
         >
           <FaUserFriends className="menu-icon" />
-          ALL PROFILES
+          All Profiles
         </li>
         <li
           className={`menu-item ${location.pathname === '/all-requests' ? 'active' : ''}`}
           onClick={() => navigate('/all-requests')}
         >
           <FaListAlt className="menu-icon" />
-          ALL REQUESTS
+          All Request
+        </li>
+        <li
+          className={`menu-item ${location.pathname === '/supplier-master-list' ? 'active' : ''}`}
+          onClick={() => navigate('/supplier-master-list')}
+        >
+          <FaPlus className="menu-icon" />
+          Create List
+        </li>
+        <li
+          className={`menu-item ${location.pathname === '/list' ? 'active' : ''}`}
+          onClick={() => navigate('/list')}
+        >
+          <FaWarehouse className="menu-icon" />
+          Supplier List
         </li>
       </ul>
     </div>
