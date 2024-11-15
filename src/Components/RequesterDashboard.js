@@ -109,56 +109,56 @@ function RequesterDashboard() {
     return months[month] || '';
   };
 
-  const filteredRequests = requests
-  .filter((request) => {
-    const requestDate = new Date(request.timestamp);
-    const requestMonth = requestDate.getMonth() + 1;
+    const filteredRequests = requests
+    .filter((request) => {
+      const requestDate = new Date(request.timestamp);
+      const requestMonth = requestDate.getMonth() + 1;
 
-    const selectedMonthNumber = getMonthNumber(selectedMonth);
-    const matchesSearchQuery = filterName === '' || request.name === filterName;
-    const matchesMonth = selectedMonth === '' || requestMonth === selectedMonthNumber;
+      const selectedMonthNumber = getMonthNumber(selectedMonth);
+      const matchesSearchQuery = filterName === '' || request.name === filterName;
+      const matchesMonth = selectedMonth === '' || requestMonth === selectedMonthNumber;
 
-    return matchesSearchQuery && matchesMonth;
-  })
-  .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by timestamp in descending order
+      return matchesSearchQuery && matchesMonth;
+    })
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by timestamp in descending order
 
-  // Calculate metrics for the selected user (filterName)
-  const totalRequestsForUser = filteredRequests.length;
-  const openRequestsForUser = filteredRequests.filter(req => req.status === 1).length;
-  const closedRequestsForUser = filteredRequests.filter(req => req.status === 2).length;
+    // Calculate metrics for the selected user (filterName)
+    const totalRequestsForUser = filteredRequests.length;
+    const openRequestsForUser = filteredRequests.filter(req => req.status === 1).length;
+    const closedRequestsForUser = filteredRequests.filter(req => req.status === 2).length;
 
-  // Pagination logic
-  const indexOfLastRequest = currentPage * requestsPerPage;
-  const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
-  const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);
-  const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
+    // Pagination logic
+    const indexOfLastRequest = currentPage * requestsPerPage;
+    const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
+    const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);
+    const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
 
-  // Handle page changes
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+    // Handle page changes
+    const handleNextPage = () => {
+      if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    };
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
+    const handlePreviousPage = () => {
+      if (currentPage > 1) setCurrentPage(currentPage - 1);
+    };
 
-  // Validate form inputs
-  const validateForm = () => {
-    const newErrors = {};
-    if (!requestForm.email) newErrors.email = 'This is a required question';
-    if (!requestForm.name) newErrors.name = 'Please select your name';
-    if (!requestForm.typeOfClient) newErrors.typeOfClient = 'Please select the type of client';
-    if (!requestForm.classification) newErrors.classification = 'Please select the classification';
-    if (!requestForm.projectTitle) newErrors.projectTitle = 'Please enter the project title';
-    if (!requestForm.philgepsReferenceNumber) newErrors.philgepsReferenceNumber = 'Please enter the Philgeps reference number or NA';
-    if (!requestForm.productType) newErrors.productType = 'Please select the product type';
-    if (!requestForm.requestType) newErrors.requestType = 'Please choose your request type';
-    if (!requestForm.dateNeeded) newErrors.dateNeeded = 'Please select a date needed';
-    if (!requestForm.specialInstructions) newErrors.specialInstructions = 'This is a required question';
+    // Validate form inputs
+    const validateForm = () => {
+      const newErrors = {};
+      if (!requestForm.email) newErrors.email = 'This is a required question';
+      if (!requestForm.name) newErrors.name = 'Please select your name';
+      if (!requestForm.typeOfClient) newErrors.typeOfClient = 'Please select the type of client';
+      if (!requestForm.classification) newErrors.classification = 'Please select the classification';
+      if (!requestForm.projectTitle) newErrors.projectTitle = 'Please enter the project title';
+      if (!requestForm.philgepsReferenceNumber) newErrors.philgepsReferenceNumber = 'Please enter the Philgeps reference number or NA';
+      if (!requestForm.productType) newErrors.productType = 'Please select the product type';
+      if (!requestForm.requestType) newErrors.requestType = 'Please choose your request type';
+      if (!requestForm.dateNeeded) newErrors.dateNeeded = 'Please select a date needed';
+      if (!requestForm.specialInstructions) newErrors.specialInstructions = 'This is a required question';
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
