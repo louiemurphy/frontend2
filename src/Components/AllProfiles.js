@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import './AllProfiles.css'; // Import your CSS for styling
-import { FaBullseye } from 'react-icons/fa'; // Import an icon for the completion percentage
+import './AllProfiles.css';
+import { FaBullseye } from 'react-icons/fa';
 
 function AllProfiles() {
-  const [teamMembers, setTeamMembers] = useState([]); // State to store team members
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch team member data from API
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('https://backend2-production-2011.up.railway.app/api/teamMembers/stats'); // Fetch from the new stats endpoint
+        const response = await fetch('https://backend2-production-2011.up.railway.app/api/teamMembers/stats');
         if (!response.ok) {
           throw new Error('Failed to fetch team members');
         }
         const data = await response.json();
-        setTeamMembers(data); // Store team members data
+        setTeamMembers(data);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchTeamMembers();
   }, []);
 
-  // Handle loading and error states
   if (loading) {
     return <div>Loading team members...</div>;
   }
@@ -36,33 +34,73 @@ function AllProfiles() {
     return <div>Error: {error}</div>;
   }
 
+  const getMonthNumber = (month) => {
+    const months = {
+      January: 1,
+      February: 2,
+      March: 3,
+      April: 4,
+      May: 5,
+      June: 6,
+      July: 7,
+      August: 8,
+      September: 9,
+      October: 10,
+      November: 11,
+      December: 12,
+    };
+    return months[month] || 0;
+  };
+
   return (
     <div className="all-profiles-container1">
       <h1>EVALUATORS</h1>
       <div className="profiles-grid1">
         {teamMembers.map((member) => {
-          const totalRequests = member.openTasks + member.closedTasks || 0; // Calculate total requests, default to 0 if both are 0
+          // Ensure member data exists
+          const openTasks = member.openTasks || 0;
+          const closedTasks = member.closedTasks || 0;
+          const canceledTasks = member.canceledTasks || 0;
+          const tasks = member.tasks || [];
+
+          // Calculate totalRequests
+          const total = openTasks + closedTasks + canceledTasks;
+
+          // Efficiency calculation similar to Dashboard component
+          const efficiencyRate = total > 0
+            ? (
+                tasks.filter((task) => {
+                  const dateNeeded = task.dateNeeded ? new Date(task.dateNeeded) : new Date();
+                  const completedAt = task.dateCompleted ? new Date(task.dateCompleted) : new Date();
+                  return completedAt <= dateNeeded;
+                }).length / total
+              ) * 100
+            : 0;  // Use 0 if no tasks
+
           return (
             <div key={member.name} className="card1">
               <div className="details">
                 <h2 className="profile-name">{member.name}</h2>
                 <p className="task-stats">
-                  Open Tasks: <span>{member.openTasks}</span>
+                  Open Tasks: <span>{openTasks}</span>
                 </p>
                 <p className="task-stats">
-                  Closed Tasks: <span>{member.closedTasks}</span>
+                  Closed Tasks: <span>{closedTasks}</span>
                 </p>
                 <p className="task-stats">
-                  Total Requests: <span>{totalRequests}</span> {/* Total requests */}
+                  Canceled Tasks: <span>{canceledTasks}</span>
                 </p>
                 <p className="task-stats">
-                  Efficiency: <span>{member.completionRate}%</span> {/* Use completion rate as efficiency */}
+                  Total Requests: <span>{total}</span>
+                </p>
+                <p className="task-stats">
+                  Efficiency: <span>{efficiencyRate.toFixed(2)}%</span>
                 </p>
               </div>
               <div className="completion">
                 <FaBullseye className="icon" />
                 <span className="completion-label">Completion Rate: </span>
-                <span className="completion-rate">{member.completionRate}%</span>
+                <span className="completion-rate">{member.completionRate || 0}%</span>
               </div>
             </div>
           );

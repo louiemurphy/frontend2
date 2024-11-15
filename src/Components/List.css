@@ -1,0 +1,150 @@
+/* Overall container styling */
+.supplier-list-fullscreen {
+    padding: 20px;
+    background-color: #f4f7fb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Wrapper for the entire page */
+.supplier-list-page {
+    width: 100%;
+    margin: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Title of the supplier list */
+.supplier-list-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Table container styling */
+.supplier-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 10px;
+    height: 800px; /* Set a fixed height for the table */
+    overflow-y: auto; /* Allow vertical scrolling if content exceeds height */
+}
+
+/* Styling for the table */
+.supplier-table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-collapse: collapse;
+}
+
+/* Header styling */
+.supplier-table-header {
+    display: flex;
+    background-color: #f8f9fa;
+    font-weight: bold;
+    padding: 10px 0;
+    border-bottom: 2px solid #e1e1e1;
+}
+
+.supplier-table-header-cell {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    border: 1px solid #ddd;
+    min-width: 120px; /* Minimum width to prevent shrinkage */
+    max-width: 200px; /* Optional max-width for larger screens */
+    overflow-wrap: break-word; /* Ensures text wraps within cell */
+}
+
+/* Table row styling */
+.supplier-table-row {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+}
+
+.supplier-table-cell {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    min-width: 120px; /* Same min-width as headers */
+    max-width: 200px; /* Optional max-width for consistency */
+    overflow-wrap: break-word; /* Ensures text wraps within cell */
+    white-space: normal; /* Allows text to wrap */
+}
+
+/* Hover effect for table rows */
+.supplier-table-row:hover {
+    background-color: #f9f9f9;
+}
+
+/* Loading and Error message styling */
+.loading-message,
+.error-message {
+    font-size: 1.2rem;
+    text-align: center;
+    color: #e74c3c;
+    margin-top: 20px;
+}
+
+/* No data available message */
+.supplier-table-row-empty {
+    text-align: center;
+    padding: 20px;
+    font-size: 1rem;
+    color: #777;
+    background-color: #f9f9f9;
+}
+
+/* Button styling for download */
+button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* Responsive adjustments for smaller screens */
+@media screen and (max-width: 768px) {
+    .supplier-table {
+        flex-direction: column;
+    }
+
+    .supplier-table-header,
+    .supplier-table-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .supplier-table-header-cell,
+    .supplier-table-cell {
+        width: 100%;
+        padding: 10px;
+    }
+}

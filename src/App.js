@@ -7,6 +7,8 @@ import EvaluatorDashboard from './Components/EvaluatorDashboard';
 import AllProfiles from './Components/AllProfiles';
 import Dashboard from './Components/Dashboard';
 import AllRequests from './Components/AllRequests'; // Import the AllRequests component
+import Supplier from './Components/Supplier'; // Import the Supplier component
+import List from './Components/List'; // Import the List component (for the supplier master list)
 
 function App() {
   return (
@@ -30,6 +32,12 @@ function App() {
 
           {/* All requests page */}
           <Route path="/all-requests" element={<AllRequests />} />
+
+          {/* New route for SUPPLIER MASTER LIST */}
+          <Route path="/supplier-master-list" element={<Supplier />} /> {/* Add this line */}
+
+          {/* Route for the Supplier List (this will display the supplier master list) */}
+          <Route path="/list" element={<List />} />  {/* Add the List route */}
 
           {/* Consolidated route for all evaluators */}
           <Route path="/dashboard/evaluator/:evaluatorId" element={<EvaluatorDashboard />} />
