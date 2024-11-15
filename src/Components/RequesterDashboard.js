@@ -29,6 +29,18 @@ function RequesterDashboard() {
     specialInstructions: '',
     status: 0,
   });
+  // Add this helper function near the top of your component
+const formatLocalTimestamp = (timestamp) => {
+  return new Date(timestamp).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+};
 
   const [errors, setErrors] = useState({}); // To store form errors
 
@@ -376,16 +388,7 @@ function RequesterDashboard() {
     <tr key={request._id} onClick={() => handleRowClick(request)}>
       <td>{request.referenceNumber}</td>
       <td>{request.name}</td>
-      <td>{new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true,
-        timeZone: 'Asia/Manila'  // Explicitly set to Philippine timezone
-      }).format(new Date(request.timestamp))}</td>
+      <td>{formatLocalTimestamp(request.timestamp)}</td>
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
@@ -399,9 +402,9 @@ function RequesterDashboard() {
       </td>
       <td>
         {request.status === 2 && request.completedAt
-          ? new Date(request.completedAt).toLocaleString()
+          ? formatLocalTimestamp(request.completedAt)
           : request.status === 3 && request.canceledAt
-          ? new Date(request.canceledAt).toLocaleString()
+          ? formatLocalTimestamp(request.canceledAt)
           : 'N/A'}
       </td>
     </tr>
