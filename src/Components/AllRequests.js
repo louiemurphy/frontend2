@@ -9,7 +9,7 @@ function AllRequests() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://backend2-4-ppp6.onrender.com/api/requests');
+        const response = await fetch('https://backend2-production-e5a1.up.railway.app/api/requests');
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }

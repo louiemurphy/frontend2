@@ -19,7 +19,7 @@ function Supplier() {
       const fetchSuppliers = async () => {
         setLoading(true);
         try {
-          const response = await axios.get('https://backend2-production-2011.up.railway.app/api/suppliers');
+          const response = await axios.get('https://backend2-production-e5a1.up.railway.app/api/suppliers');
           const formattedData = response.data.map((supplier) => ({
             ...supplier,
             timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),

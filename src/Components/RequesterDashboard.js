@@ -51,7 +51,7 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('https://backend2-production-2011.up.railway.app/api/requests');
+      const response = await fetch('https://backend2-production-e5a1.up.railway.app/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
