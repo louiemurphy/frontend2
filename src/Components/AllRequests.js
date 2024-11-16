@@ -14,7 +14,7 @@ function AllRequests() {
           throw new Error('Failed to fetch requests');
         }
         const data = await response.json();
-        console.log(data); // Log the response to verify structure
+        console.log(data); /// Log the response to verify structure
         setRequests(data);
       } catch (err) {
         setError(err.message);
@@ -38,7 +38,7 @@ function AllRequests() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = fileName || 'downloaded_file'; // Use provided file name or a generic name
+        a.download = fileName || 'downloaded_file'; /// Use provided file name or a generic name
         document.body.appendChild(a);
         a.click();
         a.remove();
