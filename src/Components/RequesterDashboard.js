@@ -161,70 +161,70 @@ function RequesterDashboard() {
       return Object.keys(newErrors).length === 0;
     };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-        try {
-            // Step 1: Create the request first (without file data)
-            const response = await fetch('https://backend2-production-b1e6.up.railway.app/api/requests', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create request');
-            }
-
-            const newRequest = await response.json(); // Get the newly created request
-
-            // Step 2: Upload the file if a file is selected
-            if (selectedFile) {
-                const formData = new FormData();
-                formData.append('file', selectedFile); // Attach the selected file
-                formData.append('requestId', newRequest._id); // Attach the newly created request ID
-
-                const uploadResponse = await fetch('https://backend2-production-b1e6.up.railway.app/requester/upload', {
-                    method: 'POST',
-                    body: formData, // Send the file and requestId as FormData
-                });
-
-                if (!uploadResponse.ok) {
-                    throw new Error('File upload failed');
-                }
-
-                // Fetch the updated request data after file upload
-                const updatedRequest = await uploadResponse.json();
-
-                // Manually update the request in the state
-                setRequests((prevRequests) =>
-                    [updatedRequest, ...prevRequests] // Prepend the updated request to the top
-                );
-            } else {
-                // No file upload, add the new request to the state
-                setRequests((prevRequests) =>
-                    [newRequest, ...prevRequests] // Prepend the new request to the top
-                );
-            }
-
-            // Step 3: Sort requests by timestamp (descending) after adding
-            setRequests((prevRequests) =>
-                prevRequests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-            );
-
-            // Step 4: Save the updated requests to localStorage
-            saveRequestsToLocalStorage([...requests, newRequest]);
-
-            // Step 5: Reset the form after successful submission
-            resetForm();
-            setSelectedFile(null); // Clear selected file
-            alert('Request submitted successfully.');
-        } catch (error) {
-            console.error('Error submitting the request:', error);
-        }
-    }
-};
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+  
+      if (validateForm()) {
+          try {
+              // Step 1: Create the request first (without file data)
+              const response = await fetch('https://backend2-production-b1e6.up.railway.app/api/requests', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
+              });
+  
+              if (!response.ok) {
+                  throw new Error('Failed to create request');
+              }
+  
+              const newRequest = await response.json(); // Get the newly created request
+  
+              // Step 2: Upload the file if a file is selected
+              if (selectedFile) {
+                  const formData = new FormData();
+                  formData.append('file', selectedFile); // Attach the selected file
+                  formData.append('requestId', newRequest._id); // Attach the newly created request ID
+  
+                  const uploadResponse = await fetch('https://backend2-production-b1e6.up.railway.app/api/requester/upload', {
+                      method: 'POST',
+                      body: formData, // Send the file and requestId as FormData
+                  });
+  
+                  if (!uploadResponse.ok) {
+                      throw new Error('File upload failed');
+                  }
+  
+                  // Fetch the updated request data after file upload
+                  const updatedRequest = await uploadResponse.json();
+  
+                  // Manually update the request in the state
+                  setRequests((prevRequests) =>
+                      [updatedRequest, ...prevRequests] // Prepend the updated request to the top
+                  );
+              } else {
+                  // No file upload, add the new request to the state
+                  setRequests((prevRequests) =>
+                      [newRequest, ...prevRequests] // Prepend the new request to the top
+                  );
+              }
+  
+              // Step 3: Sort requests by timestamp (descending) after adding
+              setRequests((prevRequests) =>
+                  prevRequests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+              );
+  
+              // Step 4: Save the updated requests to localStorage
+              saveRequestsToLocalStorage([...requests, newRequest]);
+  
+              // Step 5: Reset the form after successful submission
+              resetForm();
+              setSelectedFile(null); // Clear selected file
+              alert('Request submitted successfully.');
+          } catch (error) {
+              console.error('Error submitting the request:', error);
+          }
+      }
+  };
   const resetForm = () => {
     setRequestForm({
       email: '',
