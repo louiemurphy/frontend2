@@ -30,24 +30,7 @@ function RequesterDashboard() {
     status: 0,
   });
   
-  const formatTimestamp = (timestamp) => {
-    // Ensure the timestamp is in UTC before converting to the desired timezone
-    const date = new Date(timestamp);
-    const options = {
-      timeZone: 'Asia/Manila',
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-      hour12: true,
-    };
   
-    return date.toLocaleString('en-PH', options); // Use date directly instead of re-creating
-  };
-  
-
   const [errors, setErrors] = useState({}); // To store form errors
 
   // Mock data for dropdowns (same as before)
@@ -394,7 +377,19 @@ function RequesterDashboard() {
     <tr key={request._id} onClick={() => handleRowClick(request)}>
       <td>{request.referenceNumber}</td>
       <td>{request.name}</td>
-      <td>{formatTimestamp(request.timestamp)}</td>
+      <td>
+  {new Date(request.timestamp).toLocaleString('en-PH', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,  // 12-hour format with AM/PM
+  })}
+</td>
+
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
