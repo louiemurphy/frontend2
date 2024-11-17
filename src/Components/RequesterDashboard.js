@@ -44,7 +44,7 @@ function RequesterDashboard() {
 
   const [errors, setErrors] = useState({}); // To store form errors
 
-  // Mock data for dropdowns (same as before)
+  /// Mock data for dropdowns (same as before)
   const names = ['Cerael Donggay', 'Andrew Donggay', 'Aries Paye', 'Melody Nazareno', 'Roy Junsay', 'Mark Sorreda', 'Zir Madridano', 'Rizaldy Baldemor', 'Giovanne Bongga', 'Joyaneil Lumampao', 'Michael Bughanoy', 'Anthony De Gracia', 'Alex Cabisada', 'Matt Caulin', 'Richard Cagalawan', 'William Jover', 'Paul Shane Marte', 'Marvin Oteda', 'Julius Tan', 'Joren Bangquiao', 'Diane Yumul', 'Kenneth Fabroa', 'Mylene Agurob', 'BIDDING TEAM - Kia', 'Novi Generalao', 'BIDDING TEAM - Cora', 'BIDDING TEAM - Jan', 'BIDDING TEAM - Kaye', 'Marketing', 'Freelance', 'Ronie Serna', 'Andy Bello', 'Simon Paul Molina', 'Ralph Reginald Hallera Yee', 'Cesar Samboy Sassan'];
 
   const productTypes = ['Solar Roof Top', 'Solar Lights', 'Solar Pump', 'AC Lights', 'Diesel Generator', 'Transformer', 'Electric Vehicle', 'Floating Solar', 'Micro Grid', 'Solar Road Stud', 'Georesistivity', 'Drilling', 'Prefab Container', 'Command Center', 'ICT Products', 'Energy Audit', 'Building Construction', 'Road Concreting', 'Drone', 'Agricultural Machinery', 'Ice Machine', 'Riprap', 'Retaining Wall', 'Industrial Pumps', 'Building Wiring Installation', 'Solar CCTV', 'Solar Farm', 'Solar Insect Traps', 'Solar Water Heater', 'Concrete Water Tank', 'Solar Waiting Shed', 'Solar Prefab Container', 'Structured Cabling', 'Water Desalination', 'Steel Water Tank', 'Hydroponics', 'HVAC', 'Piping System', 'Water System', 'Conveyor System', 'Solar Generator', 'Solar Water Purifier', 'Heavy Equipment', 'Traffic Light', 'AC CCTV', 'Solar Aerator', 'AC Aerator'];
