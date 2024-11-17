@@ -166,7 +166,18 @@ function RequestList({
   {currentRequests.map((request) => (
     <tr key={request._id} onClick={() => openModal(request)}>
       <td>{request.referenceNumber}</td>
-      <td>{request.timestamp}</td>
+      <td>
+  {new Date(request.timestamp).toLocaleString('en-PH', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,  // 12-hour format with AM/PM
+  })}
+</td>
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
