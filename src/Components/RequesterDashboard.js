@@ -31,7 +31,7 @@ function RequesterDashboard() {
   });
   
   const formatTimestamp = (timestamp) => {
-    // Create a date object and format it to Philippine time
+    // Ensure the timestamp is in UTC before converting to the desired timezone
     const date = new Date(timestamp);
     const options = {
       timeZone: 'Asia/Manila',
@@ -41,10 +41,12 @@ function RequesterDashboard() {
       hour: 'numeric',
       minute: 'numeric',
       second: 'numeric',
-      hour12: true
+      hour12: true,
     };
-    return new Date(timestamp).toLocaleString('en-PH', options);
+  
+    return date.toLocaleString('en-PH', options); // Use date directly instead of re-creating
   };
+  
 
   const [errors, setErrors] = useState({}); // To store form errors
 
