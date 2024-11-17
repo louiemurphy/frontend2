@@ -29,7 +29,18 @@ function RequesterDashboard() {
     specialInstructions: '',
     status: 0,
   });
-  
+  const formatTimestamp = (timestamp) => {
+    return new Date(timestamp).toLocaleString('en-US', {
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true
+    });
+  };
 
   const [errors, setErrors] = useState({}); // To store form errors
 
@@ -377,7 +388,7 @@ function RequesterDashboard() {
     <tr key={request._id} onClick={() => handleRowClick(request)}>
       <td>{request.referenceNumber}</td>
       <td>{request.name}</td>
-      <td>{request.timestamp}</td>
+      <td>{formatTimestamp(request.timestamp)}</td>
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
