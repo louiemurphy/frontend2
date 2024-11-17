@@ -21,7 +21,7 @@ function HeaderSection({ requests }) {
   );
 }
 
-// Status Summary Component - Updates based on filtered requests
+/// Status Summary Component - Updates based on filtered requests
 function StatusSummary({ requests }) {
   const total = requests.length;
   const newRequests = requests.filter((request) => request.status === 0).length;
