@@ -200,15 +200,15 @@
 
 /* Modal Content */
 .supplier-form-modal-content1 {
-    background-color: #ffffff; /* Keeping the white background but we’ll make it more prominent */
-    padding: 30px;
-    width: 80%;
-    max-width: 1400px; /* Adjusted max-width */
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Darker, more pronounced shadow */
-    animation: fadeIn1 0.3s ease-out;
-    border: 1px solid #ddd; /* Optional border for definition */
+    background: white;
+    padding: 20px;
+    max-width: 80%; /* Max width for the modal */
+    max-height: 95%; /* Max height for the modal */
+    overflow: auto; /* Enables scrolling */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional: for a more refined look */
 }
+
 
 /* Fade-in Animation */
 @keyframes fadeIn1 {

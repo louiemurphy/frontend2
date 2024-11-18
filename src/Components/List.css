@@ -34,7 +34,7 @@
     width: 100%;
     overflow-x: auto;
     margin-top: 10px;
-    height: 800px; /* Set a fixed height for the table */
+    height: 700px; /* Set a fixed height for the table */
     overflow-y: auto; /* Allow vertical scrolling if content exceeds height */
 }
 
