@@ -78,7 +78,47 @@ body, html {
     overflow: auto;
     transition: width 0.3s ease;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-left: 10px; /* Adds some spacing on the left for better alignment */
 }
+
+/* Unordered List Styling */
+.sidebar3 ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* List Item Styling */
+.sidebar3 li {
+    margin: 10px 0;
+    padding: 10px 0; /* Adjust vertical spacing */
+    display: flex;
+    align-items: center; /* Align icon and text vertically */
+    gap: 10px; /* Adds consistent spacing between the icon and text */
+    text-align: left;
+}
+
+/* Link Styling */
+.sidebar3 a {
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center; /* Align text with the icon */
+}
+
+/* Icon Styling */
+.sidebar3 .icon {
+    font-size: 1rem; /* Adjust icon size to match the text size */
+    color: white;
+}
+
+
 
 .main-content {
     margin-left: 250px;

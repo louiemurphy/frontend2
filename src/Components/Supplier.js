@@ -19,7 +19,7 @@ function Supplier() {
       const fetchSuppliers = async () => {
         setLoading(true);
         try {
-          const response = await axios.get('https://backend2-production-b1e6.up.railway.app/api/suppliers');
+          const response = await axios.get('https://backend2-5-cyo1.onrender.com/api/suppliers');
           const formattedData = response.data.map((supplier) => ({
             ...supplier,
             timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
@@ -74,7 +74,7 @@ function Supplier() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://backend2-production-b1e6.up.railway.app/api/suppliers', newSupplier);
+      const response = await axios.post('https://backend2-5-cyo1.onrender.com/api/suppliers', newSupplier);
       const formattedSupplier = {
         ...response.data,
         timestamp: moment(response.data.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),

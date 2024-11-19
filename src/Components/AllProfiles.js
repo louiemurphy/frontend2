@@ -11,7 +11,7 @@ function AllProfiles() {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('https://backend2-production-b1e6.up.railway.app/api/teamMembers/stats');
+        const response = await fetch('https://backend2-5-cyo1.onrender.com/api/teamMembers/stats');
         if (!response.ok) {
           throw new Error('Failed to fetch team members');
         }
