@@ -11,7 +11,7 @@ const Dashboard = () => {
     // Fetch the requests data
     const fetchRequests = async () => {
       try {
-        const response = await fetch('https://193.203.162.228:5000/api/requests', { mode: 'cors' });
+        const response = await fetch('http://193.203.162.228:5000/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
