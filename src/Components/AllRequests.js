@@ -9,7 +9,7 @@ function AllRequests() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('https://backend2-5-cyo1.onrender.com/api/requests');
+        const response = await fetch('http://localhost:5000/api/requests');
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }

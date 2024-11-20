@@ -11,7 +11,7 @@ const Dashboard = () => {
     // Fetch the requests data
     const fetchRequests = async () => {
       try {
-        const response = await fetch('https://backend2-5-cyo1.onrender.com/api/requests', { mode: 'cors' });
+        const response = await fetch('http://localhost:5000/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
