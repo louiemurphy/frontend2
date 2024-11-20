@@ -259,7 +259,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/requests', { mode: 'cors' });
+        const response = await fetch('http://193.203.162.228/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
@@ -305,7 +305,7 @@ function AdminDashboard() {
       setRequests(updatedRequests);
 
       try {
-        const response = await fetch(`http://localhost:5000/api/requests/${selectedRequest._id}`, {
+        const response = await fetch(`http://193.203.162.228/api/requests/${selectedRequest._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -336,7 +336,7 @@ function AdminDashboard() {
       );
       setRequests(updatedRequests);
   
-      const response = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
+      const response = await fetch(`http://193.203.162.228/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus, completedAt, cancelledAt }), // Send both dates
@@ -365,7 +365,7 @@ function AdminDashboard() {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`http://localhost:5000${fileUrl}`, {
+      const response = await fetch(`http://193.203.162.228${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf',
