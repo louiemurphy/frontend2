@@ -9,7 +9,7 @@ function AllRequests() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://193.203.162.228/api/requests');
+        const response = await fetch('http://193.203.162.228:5000/api/requests');
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }

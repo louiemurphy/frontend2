@@ -54,7 +54,7 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('http://193.203.162.228/api/requests');
+      const response = await fetch('http://193.203.162.228:5000/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
@@ -170,7 +170,7 @@ function RequesterDashboard() {
       if (validateForm()) {
           try {
               // Step 1: Create the request first (without file data)
-              const response = await fetch('http://193.203.162.228/api/requests', {
+              const response = await fetch('http://193.203.162.228:5000/api/requests', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
@@ -188,7 +188,7 @@ function RequesterDashboard() {
                   formData.append('file', selectedFile); // Attach the selected file
                   formData.append('requestId', newRequest._id); // Attach the newly created request ID
   
-                  const uploadResponse = await fetch('http://193.203.162.228/api/requester/upload', {
+                  const uploadResponse = await fetch('http://193.203.162.228:5000/api/requester/upload', {
                       method: 'POST',
                       body: formData, // Send the file and requestId as FormData
                   });
@@ -259,7 +259,7 @@ function RequesterDashboard() {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`hhttp://193.203.162.228${fileUrl}`, {
+      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type
