@@ -19,7 +19,7 @@ function Supplier() {
       const fetchSuppliers = async () => {
         setLoading(true);
         try {
-          const response = await axios.get('https://193.203.162.228/api/suppliers');
+          const response = await axios.get('http://193.203.162.228:5000/api/suppliers');
           const formattedData = response.data.map((supplier) => ({
             ...supplier,
             timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
