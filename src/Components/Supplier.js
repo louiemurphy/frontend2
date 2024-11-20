@@ -74,7 +74,7 @@ function Supplier() {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://193.203.162.228/api/suppliers', newSupplier);
+      const response = await axios.post('http://193.203.162.228:5000/api/suppliers', newSupplier);
       const formattedSupplier = {
         ...response.data,
         timestamp: moment(response.data.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
