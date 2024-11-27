@@ -4,7 +4,6 @@ import Sidebar from './Sidebar';
 
 
 
-
 // Header Component
 function HeaderSection({ requests }) {
   return (
@@ -14,12 +13,28 @@ function HeaderSection({ requests }) {
           <h1>ADMIN DASHBOARD</h1>
         </div>
         <div className="header-right2">
-          <p>Last Request Added: {requests[requests.length - 1]?.timestamp || 'N/A'}</p>
+        <p>
+  Last Request Added: 
+  {requests.length > 0 
+    ? new Date(requests[requests.length - 1].timestamp).toLocaleString('en-PH', {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true, // 12-hour format with AM/PM
+      }) 
+    : 'N/A'}
+</p>
+
         </div>
       </div>
     </header>
   );
 }
+
 
 /// Status Summary Component - Updates based on filtered requests
 function StatusSummary({ requests }) {
@@ -472,6 +487,18 @@ const filteredRequests = requests.filter((request) => {
                 <tr><th>Request Type</th><td>{selectedRequest.requestType}</td></tr>
                 <tr><th>Date Needed</th><td>{selectedRequest.dateNeeded}</td></tr>
                 <tr><th>Special Instructions</th><td>{selectedRequest.specialInstructions}</td></tr>
+                <tr>
+  <th>Status</th>
+  <td>
+    {selectedRequest?.detailedStatus || 'No Status Available'}
+  </td>
+</tr>
+<tr>
+  <th>Remarks</th>
+  <td>
+    {selectedRequest?.remarks || 'No Remarks Available'}
+  </td>
+</tr>
                 {selectedRequest.requesterFileUrl && (
                   <tr>
                     <th>From Requester:</th>
@@ -482,6 +509,7 @@ const filteredRequests = requests.filter((request) => {
                     </td>
                   </tr>
                 )}
+                
                 {selectedRequest.fileUrl && (
                   <tr>
                     <th>From Evaluator:</th>
@@ -491,6 +519,9 @@ const filteredRequests = requests.filter((request) => {
                       </button>
                     </td>
                   </tr>
+                  
+                  
+
                 )}
               </tbody>
             </table>
@@ -517,7 +548,6 @@ const filteredRequests = requests.filter((request) => {
     ))}
   </select>
 </div>
-
             <div className="lightbox-actions2">
               <button onClick={handleSave} disabled={!selectedTeamMember}>
                 Save

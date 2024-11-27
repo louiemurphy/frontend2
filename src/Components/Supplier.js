@@ -13,7 +13,7 @@ function Supplier() {
 
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
-    const suppliersPerPage = 6; //// Change this to the number of suppliers you want to display per page
+    const suppliersPerPage = 4; //// Change this to the number of suppliers you want to display per page
 
     useEffect(() => {
       const fetchSuppliers = async () => {

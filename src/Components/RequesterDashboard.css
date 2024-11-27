@@ -357,7 +357,7 @@ body, html {
 
 /* Button Styling */
 .modal-table button {
-    background-color: #1db954;
+    background-color: black;
     color: white;
     border: none;
     padding: 6px 10px;
@@ -365,11 +365,11 @@ body, html {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    color: black;
+    color: white;
 }
 
 .modal-table button:hover {
-    background-color: #17a84b;
+    background-color: black;
 }
 
 /* Close Button */

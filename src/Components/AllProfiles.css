@@ -1,98 +1,147 @@
 .all-profiles-container {
-    padding: 15px;
-    max-width: 1000px; /* Reduced width to fit smaller screens */
-    margin: auto;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #2b3e50;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+}
+
+.sidebar-content h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.sidebar-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-content li {
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+}
+
+.profiles-container {
+  flex-grow: 1;
+  margin-left: 250px;
+  padding: 30px;
+  background-color: #f8f9fa;
+  overflow-y: auto;
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.8em; /* Reduced font size */
-    font-weight: bold;
-    color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
 }
 
-.profiles-grid1 {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; /* Reduced gap */
-    justify-content: center;
+.profiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 20px;
 }
 
-.card1 {
-    background-color: #ffffff;
-    border: none;
-    padding: 15px; /* Reduced padding */
-    width: 100%; /* Make full width for smaller screens */
-    max-width: 300px; /* Reduced card width */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.card {
+  background-color: #ffffff;
+  border: none;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 90%; /* Ensure all cards have the same height */
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .details {
-    margin-bottom: 10px; /* Reduced margin */
+  margin-bottom: 15px;
+  width: 100%; /* Ensure details take full width of the card */
 }
 
 .profile-name {
-    font-size: 1.2em; /* Reduced font size */
-    margin-bottom: 8px;
-    color: #333;
-    font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
 }
 
 .task-stats {
-    font-size: 0.9em; /* Reduced font size */
-    margin: 5px 0;
-    color: #555;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin: 12px 0;
+  color: #666;
+  width: 100%; /* Ensure task stats take full width of the card */
 }
 
 .task-stats span {
-    font-weight: bold;
-    color: #000;
+  font-weight: 600;
+  color: #333;
 }
 
 .completion {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: auto; /* Push completion to the bottom of the card */
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  width: 100%; /* Ensure completion takes full width of the card */
 }
 
 .icon {
-    margin-right: 8px;
-    color: #6c757d;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  color: #666;
 }
 
 .completion-label {
-    font-weight: bold;
-    color: #333;
+  color: #666;
+  font-size: 14px;
 }
 
 .completion-rate {
-    font-size: 1.1em;
-    color: green;
-    margin-left: 5px;
-    font-weight: bold;
+  margin-left: auto;
+  color: #22c55e;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
-    .profiles-grid {
-        flex-direction: column;
-        align-items: center;
-    }
+  .all-profiles-container {
+    flex-direction: column;
+  }
 
-    .card {
-        width: 100%; /* Adjust card size for smaller screens */
-    }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .profiles-container {
+    margin-left: 0;
+  }
+
+  .profiles-grid {
+    grid-template-columns: 1fr;
+  }
 }
+

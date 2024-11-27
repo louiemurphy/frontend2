@@ -1,8 +1,8 @@
-// Components/Sidebar.js
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useNavigate, useLocation, Link } from 'react-router-dom';  // Add Link import here
 import { FaTachometerAlt, FaUserFriends, FaListAlt, FaWarehouse, FaPlus } from 'react-icons/fa';
 import './Sidebar.css';
+import { FaSignOutAlt } from "react-icons/fa";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -47,6 +47,13 @@ function Sidebar() {
           <FaWarehouse className="menu-icon" />
           Supplier List
         </li>
+        <li className="menu-item2">
+  <FaSignOutAlt className="icon" />
+  <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+    Logout
+  </Link>
+</li>
+
       </ul>
     </div>
   );

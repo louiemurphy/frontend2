@@ -81,3 +81,52 @@
         font-size: 0.9em;
     }
 }
+/* Sidebar container (assuming the parent container has flex layout) */
+.sidebar {
+    display: flex;
+    flex-direction: column; /* Arrange children vertically */
+    height: 100%; /* Ensure the sidebar takes the full height of its parent */
+  }
+  
+  /* Styling for the menu-item2 (Logout) */
+.menu-item2 {
+    display: flex;
+    align-items: center; /* Align icon and text vertically */
+    gap: 10px; /* Space between the icon and the text */
+    padding: 10px 15px; /* Add padding for a better clickable area */
+    cursor: pointer; /* Change cursor to pointer when hovering */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth transition effects */
+    padding-top: 400px; /* Add some space above */
+  }
+  
+  /* Hover effect for the menu-item2 */
+  .menu-item2:hover {
+    color: white; /* White text when hovered */
+  }
+  
+  /* Icon styling within the menu-item2 */
+  .menu-item2 .icon {
+    font-size: 1.5rem; /* Icon size */
+    color: rgb(152, 147, 147); /* Default color for the icon */
+    transition: color 0.3s ease; /* Smooth color transition */
+  }
+  
+  /* Change icon color on hover */
+  .menu-item2:hover .icon {
+    color: white; /* Change icon color to white on hover */
+  }
+  
+  /* Link styling within the menu-item2 */
+  .menu-item2 a {
+    text-decoration: none;
+    color: inherit; /* Inherit color from the parent */
+    font-size: 1rem; /* Font size for the text */
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center; /* Align text with the icon */
+  }
+  
+  /* Change link color on hover */
+  .menu-item2 a:hover {
+    color: white; /* White color on hover for the link text */
+  }

@@ -401,4 +401,151 @@ body, html {
       padding: 6px 12px;
     }
   }
-  
+  /* Styling the logout container */
+.logout-container {
+  margin-top: auto; /* Push logout button to the bottom */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between the icon and text */
+  justify-content: center; /* Center the button horizontally */
+  padding-top: 400px; /* Add some space above */
+}
+
+/* Styling the logout link */
+.logout-link {
+  text-decoration: none;
+  color: rgb(29,45,80); /* Red color for logout */
+  font-weight: bold;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center; /* Align icon and text vertically */
+}
+
+/* Logout icon styling */
+.logout-container .icon {
+  font-size: 1.5rem; /* Adjust icon size */
+  color: rgb(29,45,80); /* Red color for the logout icon */
+  margin-right: 5px;
+}
+
+/* Hover effect for the logout link */
+.logout-link:hover {
+  color: rgb(29,45,80); /* Darker red on hover */
+}
+
+/* Add this to your EvaluatorDashboard.css file */
+
+/* Main Status Colors */
+.status-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border-color: #ffeeba;
+}
+
+.status-ongoing {
+  background-color: #cce5ff;
+  color: #004085;
+  border-color: #b8daff;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.status-canceled {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+/* Detailed Status Colors */
+.detailed-status-select {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+.detailed-status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.detailed-status-ongoing {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.detailed-status-done {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.detailed-status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Add hover effects */
+.status-select:hover,
+.detailed-status-select:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* Add to your EvaluatorDashboard.css */
+.detailed-status-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.detailed-status-select optgroup {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.detailed-status-select option {
+  padding: 8px;
+  font-weight: normal;
+}
+
+/* Status-specific colors */
+.detailed-status-select option[value^="done-go"],
+.detailed-status-select option[value="done-system-sizing"],
+.detailed-status-select option[value="done-request-approved"],
+.detailed-status-select option[value="done-quotation-submitted"],
+.detailed-status-select option[value="done-technical-docs-turnover"],
+.detailed-status-select option[value="done-proposal-approved"],
+.detailed-status-select option[value="done-survey-request-approved"] {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.detailed-status-select option[value^="done-no-go"],
+.detailed-status-select option[value="done-proposal-disapproved"],
+.detailed-status-select option[value^="done-unable"] {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.detailed-status-select option[value^="cancelled"] {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.detailed-status-select option[value="on-going"] {
+  background-color: #cce5ff;
+  color: #004085;
+}

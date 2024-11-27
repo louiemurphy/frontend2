@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './RequesterDashboard.css'; // Custom CSS file for styling
 import { FaUsers, FaShoppingCart, FaBox } from 'react-icons/fa'; // Icons for cards
 import { Link } from 'react-router-dom';
-import { FaPlus } from 'react-icons/fa';
+import { FaSignOutAlt } from "react-icons/fa";
+
 
 
 function RequesterDashboard() {
@@ -18,6 +19,8 @@ function RequesterDashboard() {
   const [selectedMonth, setSelectedMonth] = useState(''); // State for filtering by month
   const requestsPerPage = 5; // Number of requests per page
   const [modalVisible, setModalVisible] = useState(false); // Default is set to false
+  const [lastRefNumber, setLastRefNumber] = useState(0);
+  const [initialized, setInitialized] = useState(false);
 
   const [requestForm, setRequestForm] = useState({
     email: '',
@@ -50,6 +53,7 @@ function RequesterDashboard() {
     fetchRequests();
     loadRequestsFromLocalStorage();
   }, []);
+
 
   const fetchRequests = async () => {
     try {
@@ -163,71 +167,138 @@ function RequesterDashboard() {
       setErrors(newErrors);
       return Object.keys(newErrors).length === 0;
     };
+    
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+// Function to save the last reference number to localStorage
+const saveLastRefNumberToLocalStorage = (refNumber) => {
+  localStorage.setItem('lastRefNumber', refNumber);
+};
+
+// Function to get the last reference number from localStorage
+const getLastRefNumberFromLocalStorage = () => {
+  const savedRefNumber = localStorage.getItem('lastRefNumber');
+  return savedRefNumber ? parseInt(savedRefNumber, 10) : 0; // Default to 0 if not found
+};
+
+// Inside the useEffect for initialization
+useEffect(() => {
+  // Fetch requests from the server or localStorage
+  fetchRequests();
+  loadRequestsFromLocalStorage();
+
+  // Initialize lastRefNumber from localStorage or database
+  const savedLastRefNumber = getLastRefNumberFromLocalStorage();
+  setLastRefNumber(savedLastRefNumber);
+
+}, []);
+
+// Inside the handleSubmit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
   
-      if (validateForm()) {
-          try {
-              // Step 1: Create the request first (without file data)
-              const response = await fetch('http://193.203.162.228:5000/api/requests', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(requestForm), // Pass only the form data without file-related fields
-              });
+  if (validateForm()) {
+    try {
+      // Generate new reference number based on the current state of requests
+      const newRefNumber = lastRefNumber + 1;
+      const formattedRefNumber = String(newRefNumber).padStart(4, '0');
   
-              if (!response.ok) {
-                  throw new Error('Failed to create request');
-              }
+      // Add reference number to the form data
+      const requestWithRef = {
+        ...requestForm,
+        referenceNumber: formattedRefNumber
+      };
   
-              const newRequest = await response.json(); // Get the newly created request
+      // Step 1: Create the request first (without file data)
+      const response = await fetch('http://193.203.162.228:5000/api/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestWithRef),
+      });
   
-              // Step 2: Upload the file if a file is selected
-              if (selectedFile) {
-                  const formData = new FormData();
-                  formData.append('file', selectedFile); // Attach the selected file
-                  formData.append('requestId', newRequest._id); // Attach the newly created request ID
-  
-                  const uploadResponse = await fetch('http://193.203.162.228:5000/api/requester/upload', {
-                      method: 'POST',
-                      body: formData, // Send the file and requestId as FormData
-                  });
-  
-                  if (!uploadResponse.ok) {
-                      throw new Error('File upload failed');
-                  }
-  
-                  // Fetch the updated request data after file upload
-                  const updatedRequest = await uploadResponse.json();
-  
-                  // Manually update the request in the state
-                  setRequests((prevRequests) =>
-                      [updatedRequest, ...prevRequests] // Prepend the updated request to the top
-                  );
-              } else {
-                  // No file upload, add the new request to the state
-                  setRequests((prevRequests) =>
-                      [newRequest, ...prevRequests] // Prepend the new request to the top
-                  );
-              }
-  
-              // Step 3: Sort requests by timestamp (descending) after adding
-              setRequests((prevRequests) =>
-                  prevRequests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-              );
-  
-              // Step 4: Save the updated requests to localStorage
-              saveRequestsToLocalStorage([...requests, newRequest]);
-  
-              // Step 5: Reset the form after successful submission
-              resetForm();
-              setSelectedFile(null); // Clear selected file
-              alert('Request submitted successfully.');
-          } catch (error) {
-              console.error('Error submitting the request:', error);
-          }
+      if (!response.ok) {
+        throw new Error('Failed to create request');
       }
-  };
+  
+      const newRequest = await response.json();
+  
+      // After submitting the request, update the last reference number (state)
+      setLastRefNumber(newRefNumber);
+      saveLastRefNumberToLocalStorage(newRefNumber); // Save the new reference number to localStorage
+  
+      // Step 2: Upload the file if a file is selected
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('requestId', newRequest._id);
+  
+        const uploadResponse = await fetch('http://193.203.162.228:5000/api/requester/upload', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!uploadResponse.ok) {
+          throw new Error('File upload failed');
+        }
+  
+        const updatedRequest = await uploadResponse.json();
+  
+        setRequests((prevRequests) => [updatedRequest, ...prevRequests]);
+      } else {
+        setRequests((prevRequests) => [newRequest, ...prevRequests]);
+      }
+  
+      // Step 3: Sort requests by timestamp (descending) after adding
+      setRequests((prevRequests) =>
+        prevRequests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      );
+  
+      // Step 4: Save the updated requests to localStorage
+      saveRequestsToLocalStorage([...requests, newRequest]);
+  
+      // Step 5: Reset the form and close it
+      resetForm();
+      setSelectedFile(null);
+      setShowRequestForm(false); // Close the form
+    } catch (error) {
+      console.error('Error submitting the request:', error);
+      alert('Error submitting request. Please try again.');
+    }
+  }
+};
+
+// Function to delete all requests
+const deleteAllRequests = async () => {
+  try {
+    // Step 1: Delete all requests from the database
+    const response = await fetch('http://193.203.162.228:5000/api/requests', {
+      method: 'DELETE', // Assuming you're deleting all requests with a DELETE method
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete requests');
+    }
+
+    // Step 2: Reset the last reference number to 1
+    setLastRefNumber(1); // Reset the reference number to 1 in the state
+    saveLastRefNumberToLocalStorage(1); // Save the reset reference number to localStorage
+
+    // Step 3: Fetch the updated list of requests (should be empty after deletion)
+    const updatedRequests = await fetch('http://193.203.162.228:5000/api/requests');
+    const requestsInDatabase = await updatedRequests.json();
+
+    if (requestsInDatabase.length === 0) {
+      // Ensure no old requests remain
+      setRequests([]); // Clear the request state
+    }
+
+    alert('All requests have been deleted, and the reference number has been reset to 0001');
+  } catch (error) {
+    console.error('Error deleting requests:', error);
+    alert('Error deleting requests. Please try again.');
+  }
+};
+
+    
   const resetForm = () => {
     setRequestForm({
       email: '',
@@ -303,14 +374,17 @@ function RequesterDashboard() {
         <>
           <div className="sidebar3">
   <ul>
+
     <li>
-      <FaPlus className="icon" />
-      <Link to="/graphic" style={{ textDecoration: 'none', color: 'inherit' }}>
-        IT/Graphic Design Request
+      <FaSignOutAlt className="icon" />
+      <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+        Logout
       </Link>
     </li>
   </ul>
 </div>
+
+
 
 
           <div className="main-content">
@@ -496,34 +570,28 @@ function RequesterDashboard() {
                         </tr>
                       )}
                       <tr>
-                      <tr>
   <th>Status</th>
   <td>
-    {selectedRequest.status === 1
-      ? 'Ongoing'
-      : selectedRequest.status === 2
-      ? 'Complete'
-      : selectedRequest.status === 3
-      ? 'Cancelled'
-      : 'Pending'}
+    {selectedRequest?.detailedStatus || 'No Status Available'}
   </td>
 </tr>
-
-
-                      </tr>
-                      <tr>
-  <th>Date Completed</th>
+<tr>
+  <th>Remarks</th>
   <td>
-    {selectedRequest.status === 2 && selectedRequest.completedAt
-      ? new Date(selectedRequest.completedAt).toLocaleString()
-      : selectedRequest.status === 3 && selectedRequest.cancelledAt
-      ? new Date(selectedRequest.cancelledAt).toLocaleString()
-      : 'N/A'}
+    {selectedRequest?.remarks || 'No Remarks Available'}
   </td>
 </tr>
 
-
-
+    <tr>
+      <th>Date Completed</th>
+      <td>
+        {selectedRequest.status === 2 && selectedRequest.completedAt
+          ? new Date(selectedRequest.completedAt).toLocaleString()
+          : selectedRequest.status === 3 && selectedRequest.cancelledAt
+          ? new Date(selectedRequest.cancelledAt).toLocaleString()
+          : 'N/A'}
+      </td>
+    </tr>
                     </tbody>
                   </table>
                   <button onClick={closeModal} className="close-modal-btn">Close</button>
@@ -596,7 +664,7 @@ function RequesterDashboard() {
                     className={errors.classification ? 'input-error' : ''}
                   >
                     <option value="">Select classification</option>
-                    <option value="Negotiable">Negotiable</option>
+                    <option value="Negotiated">Negotiated</option>
                     <option value="Competitive">Competitive</option>
                   </select>
                   {errors.classification && <p className="error-text">{errors.classification}</p>}

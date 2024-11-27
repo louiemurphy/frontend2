@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import './Dashboard.css'; // Importing the CSS for styling
+import './Dashboard.css';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { FaCheckCircle, FaClock, FaExclamationCircle, FaBan, FaQuestionCircle } from 'react-icons/fa';
 
 const Dashboard = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(''); // State for selected month
+  const [selectedMonth, setSelectedMonth] = useState('');
 
   useEffect(() => {
-    // Fetch the requests data
     const fetchRequests = async () => {
       try {
         const response = await fetch('http://193.203.162.228:5000/api/requests', { mode: 'cors' });
@@ -29,54 +30,82 @@ const Dashboard = () => {
 
   const getMonthNumber = (month) => {
     const months = {
-      January: 1,
-      February: 2,
-      March: 3,
-      April: 4,
-      May: 5,
-      June: 6,
-      July: 7,
-      August: 8,
-      September: 9,
-      October: 10,
-      November: 11,
-      December: 12,
+      January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
+      July: 7, August: 8, September: 9, October: 10, November: 11, December: 12,
     };
     return months[month] || 0;
   };
 
-  // Filter requests by selected month
   const filteredRequests = React.useMemo(() => {
     if (selectedMonth === '') {
-      return requests; // Show all data when no month is selected
+      return requests;
     }
 
     const selectedMonthNumber = getMonthNumber(selectedMonth);
     return requests.filter((request) => {
       const requestDate = new Date(request.timestamp);
-      return requestDate.getMonth() + 1 === selectedMonthNumber; // +1 because getMonth() returns 0-based month index
+      return requestDate.getMonth() + 1 === selectedMonthNumber;
     });
   }, [requests, selectedMonth]);
 
-  // Calculate the statistics based on the filtered requests data
+  // Function to process requests data for charts
+  const processChartData = () => {
+    const chartData = [];
+
+    // Loop through the requests and group them by month
+    filteredRequests.forEach((request) => {
+      const requestDate = new Date(request.timestamp);
+      const month = requestDate.toLocaleString('default', { month: 'short' }); // Get the short month name
+
+      // Find or create the data object for the current month
+      let monthData = chartData.find(data => data.month === month);
+      if (!monthData) {
+        monthData = { month, delayed: 0, onTime: 0, total: 0, completed: 0 };
+        chartData.push(monthData);
+      }
+
+      // Increment the counts based on the request status and timing
+      monthData.total += 1;
+      if (request.status === 2) { // Completed
+        monthData.completed += 1;
+      }
+
+      if (request.status === 3) { // Canceled
+        // You can also track canceled requests if needed
+      }
+
+      const dateNeeded = new Date(request.dateNeeded);
+      const completedAt = new Date(request.completedAt);
+
+      // Check if the request is delayed (if the completed date is after the needed date)
+      if (completedAt > dateNeeded) {
+        monthData.delayed += 1;
+      } else {
+        monthData.onTime += 1;
+      }
+    });
+
+    return chartData;
+  };
+
+  const chartData = processChartData(); // Process the data for charts
+
   const calculateStats = () => {
     const total = filteredRequests.length;
     const completed = filteredRequests.filter((request) => request.status === 2).length;
-    const canceled = filteredRequests.filter((request) => request.status === 3).length; // Cancellation logic
+    const canceled = filteredRequests.filter((request) => request.status === 3).length;
 
+    const completionRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
     const efficiencyRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
 
-    // Delayed Rate Logic: If `completedAt` is after `dateNeeded`
     const delayed = filteredRequests.filter((request) => {
       const dateNeeded = new Date(request.dateNeeded);
       const completedAt = new Date(request.completedAt);
-      return completedAt > dateNeeded; // Delayed if completedAt is after dateNeeded
+      return completedAt > dateNeeded;
     }).length;
 
     const delayedRate = total > 0 ? ((delayed / total) * 100).toFixed(2) : '0.00';
-
     const canceledRate = total > 0 ? ((canceled / total) * 100).toFixed(2) : '0.00';
-    const completionRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
 
     return { total, completionRate, efficiencyRate, delayedRate, canceledRate };
   };
@@ -93,7 +122,6 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Month Filter */}
       <div className="month-filter">
         <label>Filter by Month:</label>
         <select
@@ -116,27 +144,97 @@ const Dashboard = () => {
         </select>
       </div>
 
-      {/* Stats Section */}
       <div className="stats-container">
         <div className="stat-box">
           <h2>Total Requests</h2>
+          <FaQuestionCircle className="stat-icon" />
           <p className="stat-value">{total}</p>
+          <div className="stat-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <Bar dataKey="total" fill="#4CAF50" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
         <div className="stat-box">
           <h2>Completion Rate</h2>
+          <FaCheckCircle className="stat-icon" />
           <p className="stat-value">{completionRate}%</p>
+          <div className="stat-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <Bar dataKey="completed" fill="#4CAF50" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
         <div className="stat-box">
           <h2>Efficiency Rate</h2>
+          <FaClock className="stat-icon" />
           <p className="stat-value">{efficiencyRate}%</p>
+          <div className="stat-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <Bar dataKey="onTime" fill="#4CAF50" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
         <div className="stat-box">
           <h2>Delayed Rate</h2>
+          <FaExclamationCircle className="stat-icon" />
           <p className="stat-value">{delayedRate}%</p>
+          <div className="stat-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <Bar dataKey="delayed" fill="#4CAF50" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
         <div className="stat-box">
           <h2>Canceled Rate</h2>
+          <FaBan className="stat-icon" />
           <p className="stat-value">{canceledRate}%</p>
+          <div className="stat-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <Bar dataKey="canceled" fill="#4CAF50" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      <div className="charts-container">
+        <div className="chart-box">
+          <h2>Delayed vs On Time Requests</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="delayed" stroke="#FF9800" />
+              <Line type="monotone" dataKey="onTime" stroke="#4CAF50" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="chart-box">
+          <h2>Total Requests vs Completed Requests</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="total" stroke="#2196F3" />
+              <Line type="monotone" dataKey="completed" stroke="#4CAF50" />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

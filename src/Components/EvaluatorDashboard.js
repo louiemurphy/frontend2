@@ -27,14 +27,141 @@ function EvaluatorDashboard() {
     tristan: "Tristan Chua",
     rodel: "Rodel Bartolata"
   };
-  const handleITRequest = () => {
-    // Your logic for handling the IT/Graphic Design request
-    console.log('IT/Graphic Design Request button clicked!');
-    // You can add further logic here, such as navigation or triggering a modal
-  };
+
   
 
   const teamMember = teamMembers[evaluatorId] || "Unknown Evaluator";
+
+  // Add this helper function to get the status class
+const getStatusClass = (status) => {
+  switch (status) {
+    case 0:
+      return 'status-pending';
+    case 1:
+      return 'status-ongoing';
+    case 2:
+      return 'status-completed';
+    case 3:
+      return 'status-canceled';
+    default:
+      return '';
+  }
+};
+const getDetailedStatusClass = (detailedStatus) => {
+  if (!detailedStatus) return 'detailed-status-pending';
+  if (detailedStatus === 'on-going') return 'detailed-status-ongoing';
+  if (detailedStatus.startsWith('done-')) return 'detailed-status-done';
+  if (detailedStatus.startsWith('cancelled-')) return 'detailed-status-cancelled';
+  return 'detailed-status-pending';
+};
+
+  // Helper function to map detailed status to main status
+  const getMainStatus = (detailedStatus) => {
+    if (!detailedStatus) return 0; // Default to Pending
+
+    // Map detailed statuses to main statuses
+    if (detailedStatus === 'on-going') {
+      return 1; // Ongoing
+    } else if (detailedStatus.startsWith('cancelled-')) {
+      return 3; // Canceled
+    } else if (detailedStatus.startsWith('done-')) {
+      return 2; // Completed
+    } else {
+      return 0; // Pending
+    }
+  };
+
+  const handleStatusChanged = async (event) => {
+    const selectedDetailedStatus = event.target.value;
+    
+    if (!selectedRequest) {
+      alert('No request selected');
+      return;
+    }
+
+    // Get the corresponding main status
+    const mainStatus = getMainStatus(selectedDetailedStatus);
+    
+    try {
+      // First, update the detailed status
+      const detailedResponse = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateDetailedStatus`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ detailedStatus: selectedDetailedStatus }),
+      });
+
+      if (!detailedResponse.ok) {
+        throw new Error('Failed to update detailed status');
+      }
+
+      // Then, update the main status
+      const mainResponse = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: mainStatus,
+          completedAt: mainStatus === 2 ? new Date().toISOString() : null,
+          canceledAt: mainStatus === 3 ? new Date().toISOString() : null,
+        }),
+      });
+
+      if (!mainResponse.ok) {
+        throw new Error('Failed to update main status');
+      }
+
+      const updatedRequest = await mainResponse.json();
+
+      // Update both states
+      setRequests((prevRequests) => {
+        const updatedRequests = prevRequests.map((req) =>
+          req._id === updatedRequest._id ? updatedRequest : req
+        );
+        localStorage.setItem('requests', JSON.stringify(updatedRequests));
+        return updatedRequests;
+      });
+
+      setSelectedRequest(updatedRequest);
+      alert(`Request status updated to: ${selectedDetailedStatus}`);
+    } catch (error) {
+      console.error('Status update error:', error);
+      alert(`Status update failed: ${error.message}`);
+    }
+  };
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await fetch('http://193.203.162.228:5000/api/requests');
+        const data = await response.json();
+        setRequests(data);
+        
+        // If there's a selected request ID in localStorage, find and set it
+        const savedRequestId = localStorage.getItem('selectedRequestId');
+        if (savedRequestId) {
+          const savedRequest = data.find(req => req._id === savedRequestId);
+          if (savedRequest) {
+            setSelectedRequest(savedRequest);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching requests:', error);
+      }
+    };
+
+    fetchRequests();
+  }, []);
+  
+  useEffect(() => {
+    if (selectedRequest) {
+      localStorage.setItem('selectedRequestId', selectedRequest._id);
+    }
+  }, [selectedRequest]);
+  
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -101,32 +228,7 @@ function EvaluatorDashboard() {
     }
   };
 
-  const handleStatusChange = async (requestId, newStatus, fileUrl) => {
-    if (newStatus === 2 && !fileUrl) {
-      alert('You cannot mark this request as completed without an evaluator file.');
-      return;
-    }
-    const completedAt = newStatus === 2 ? new Date().toISOString() : null;
-
-    try {
-      const response = await fetch(`http://193.203.162.228:5000/api/requests/${requestId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: newStatus,
-          completedAt: completedAt,
-        }),
-      });
-      if (!response.ok) throw new Error('Failed to update status');
-
-      const updatedRequest = await response.json();
-      setRequests(prevRequests =>
-        prevRequests.map(req => req._id === updatedRequest._id ? updatedRequest : req)
-      );
-    } catch (error) {
-      alert('Status update failed. Please try again.');
-    }
-  };
+  
 
   const openModal = (request) => {
     setSelectedRequest(request);
@@ -264,11 +366,6 @@ function EvaluatorDashboard() {
         <button onClick={() => setIsEditing(true)} style={{ display: 'block', marginTop: '10px' }}>
           Edit Profile
         </button>
-        <button>
-  <Link to="/graphic" style={{ textDecoration: 'none', color: 'inherit' }}>
-    IT/Graphic Design Request
-  </Link>
-</button>
       </>
     )}
   </div>
@@ -343,16 +440,17 @@ function EvaluatorDashboard() {
 
                     <td>{req.projectTitle}</td>
                     <td>
-                      <select
-                        value={req.status}
-                        onChange={(e) => handleStatusChange(req._id, Number(e.target.value), req.fileUrl)} 
-                        onClick={(e) => e.stopPropagation()}  
-                      >
-                        <option value={0}>Pending</option>
-                        <option value={1}>Ongoing</option>
-                        <option value={2} disabled={!req.fileUrl}>Completed</option>
-                        <option value={3}>Canceled</option> 
-                      </select>
+                    <select
+  value={req.status}
+  disabled
+  onClick={(e) => e.stopPropagation()}
+  className={`status-select ${getStatusClass(req.status)}`}
+>
+  <option value={0}>Pending</option>
+  <option value={1}>Ongoing</option>
+  <option value={2}>Completed</option>
+  <option value={3}>Canceled</option>
+</select>
                     </td>
                     <td>
   {req.status === 2 && req.completedAt // Show completedAt if status is "Completed"
@@ -376,85 +474,261 @@ function EvaluatorDashboard() {
 
       {/* Modal for viewing and uploading files */}
       {modalVisible && selectedRequest && (
-        <div className="modal4">
-          <div className="modal-content4">
-            <h3 className="modal-header4">Request Details</h3>
-            <table className="modal-table4">
-              <tbody>
-                <tr>
-                  <th>Email</th>
-                  <td>{selectedRequest.email}</td>
-                </tr>
-                <tr>
-                  <th>Name</th>
-                  <td>{selectedRequest.name}</td>
-                </tr>
-                <tr>
-                  <th>Type of Client</th>
-                  <td>{selectedRequest.typeOfClient}</td>
-                </tr>
-                <tr>
-                  <th>Classification</th>
-                  <td>{selectedRequest.classification}</td>
-                </tr>
-                <tr>
-                  <th>Project Title</th>
-                  <td>{selectedRequest.projectTitle}</td>
-                </tr>
-                <tr>
-                  <th>Philgeps Reference Number</th>
-                  <td>{selectedRequest.philgepsReferenceNumber}</td>
-                </tr>
-                <tr>
-                  <th>Product Type</th>
-                  <td>{selectedRequest.productType}</td>
-                </tr>
-                <tr>
-                  <th>Request Type</th>
-                  <td>{selectedRequest.requestType}</td>
-                </tr>
-                <tr>
-                  <th>Date Needed</th>
-                  <td>{selectedRequest.dateNeeded}</td>
-                </tr>
-                <tr>
-                  <th>Special Instructions</th>
-                  <td>{selectedRequest.specialInstructions}</td>
-                </tr>
-                {selectedRequest.requesterFileUrl && (
-                  <tr>
-                    <th>From Requester:</th>
-                    <td>
-                      <button onClick={() => downloadFile(selectedRequest.requesterFileUrl, selectedRequest.requesterFileName)}>
-                        Download {selectedRequest.requesterFileName || 'file'}
-                      </button>
-                    </td>
-                  </tr>
-                )}
-                {selectedRequest.fileUrl && (
-                  <tr>
-                    <th>From Evaluator:</th>
-                    <td>
-                      <a href={selectedRequest.fileUrl} download={selectedRequest.fileName || 'evaluation'}>
-                        Download {selectedRequest.fileName}
-                      </a>
-                    </td>
-                  </tr>
-                )}
-                <tr>
-                  <th>Upload Evaluation</th>
-                  <td>
-                    <input type="file" onChange={handleFileChange} />
-                    <button onClick={handleFileUpload}>Upload</button>
-                    {uploadedFile && <p>File: {uploadedFile.name}</p>}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <button onClick={closeModal} className="close-modal-btn">Close</button>
-          </div>
-        </div>
-      )}
+  <div className="modal4">
+    <div className="modal-content4">
+      <h3 className="modal-header4">Request Details</h3>
+      <table className="modal-table4">
+        <tbody>
+          <tr>
+            <th>Email</th>
+            <td>{selectedRequest.email}</td>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <td>{selectedRequest.name}</td>
+          </tr>
+          <tr>
+            <th>Type of Client</th>
+            <td>{selectedRequest.typeOfClient}</td>
+          </tr>
+          <tr>
+            <th>Classification</th>
+            <td>{selectedRequest.classification}</td>
+          </tr>
+          <tr>
+            <th>Project Title</th>
+            <td>{selectedRequest.projectTitle}</td>
+          </tr>
+          <tr>
+            <th>Philgeps Reference Number</th>
+            <td>{selectedRequest.philgepsReferenceNumber}</td>
+          </tr>
+          <tr>
+            <th>Product Type</th>
+            <td>{selectedRequest.productType}</td>
+          </tr>
+          <tr>
+            <th>Request Type</th>
+            <td>{selectedRequest.requestType}</td>
+          </tr>
+          <tr>
+            <th>Date Needed</th>
+            <td>{selectedRequest.dateNeeded}</td>
+          </tr>
+          <tr>
+            <th>Special Instructions</th>
+            <td>{selectedRequest.specialInstructions}</td>
+          </tr>
+          {selectedRequest.requesterFileUrl && (
+            <tr>
+              <th>From Requester:</th>
+              <td>
+                <button onClick={() => downloadFile(selectedRequest.requesterFileUrl, selectedRequest.requesterFileName)}>
+                  Download {selectedRequest.requesterFileName || 'file'}
+                </button>
+              </td>
+            </tr>
+          )}
+          {selectedRequest.fileUrl && (
+            <tr>
+              <th>From Evaluator:</th>
+              <td>
+                <a href={selectedRequest.fileUrl} download={selectedRequest.fileName || 'evaluation'}>
+                  Download {selectedRequest.fileName}
+                </a>
+              </td>
+            </tr>
+          )}
+          <tr>
+            <th>Upload Evaluation</th>
+            <td>
+              <input type="file" onChange={handleFileChange} />
+              <button onClick={handleFileUpload}>Upload</button>
+              {uploadedFile && <p>File: {uploadedFile.name}</p>}
+            </td>
+          </tr>
+
+          {/* Status Update Section */}
+          <tr>
+  <th>Status Update</th>
+  <td>
+    <select 
+      value={selectedRequest?.detailedStatus || ''} 
+      onChange={handleStatusChanged}
+      className={`detailed-status-select ${getDetailedStatusClass(selectedRequest?.detailedStatus)}`}
+    >
+      <option value="">Select Status</option>
+      <option value="on-going">On Going</option>
+      
+      <optgroup label="Done - Approved">
+        <option value="done-system-sizing">Done - System Sizing</option>
+        <option value="done-request-approved">Done - Request Approved. For Schedule</option>
+        <option value="done-quotation-submitted">Done - Quotation submitted</option>
+        <option value="done-technical-docs-turnover">Done - Technical documents turnover done</option>
+        <option value="done-proposal-approved">Done - Proposal Approved! Proceed for submission</option>
+        <option value="done-survey-request-approved">Done - Survey request approved! arrangement done</option>
+        <option value="done-go-proceed-bidding">Done - Go, Proceed to bidding!</option>
+        <option value="done-go-suggest-negotiate">Done - Go, Suggest to Negotiate!</option>
+      </optgroup>
+
+      <optgroup label="Done - No Go">
+        <option value="done-no-go-supplier-acquisition">Done - No Go - Supplier Acquisition Problem</option>
+        <option value="done-no-go-bidding-team-directives">Done - No Go, Bidding Team Directives!</option>
+        <option value="done-no-go-certificate">Done - No Go, Unable to provide certificates!</option>
+        <option value="done-no-go-specifications">Done - No Go, Unable to meet specifications!</option>
+        <option value="done-no-go-short-lead-time">Done - No Go, Short Delivery Lead Time!</option>
+        <option value="done-no-go-breakeven">Done - No Go, Breakeven!</option>
+        <option value="done-no-go-profitability">Done - No Go, Below 20% Profitabilty!</option>
+        <option value="done-no-go-negative-profit">Done - No Go, Negative Profit!</option>
+      </optgroup>
+
+      <optgroup label="Done - Other">
+        <option value="done-suggest-buy-bid-docs">Done - Suggest to buy bid docs for further evaluation</option>
+        <option value="done-proposal-disapproved">Done - Proposal disapproved! Need further assessment</option>
+        <option value="done-unable-evaluate-late-request">Done - Unable to evaluate, late request!</option>
+        <option value="done-unable-evaluate-multiple-requests">Done - Unable to evaluate, multiple requests!</option>
+        <option value="done-unable-evaluate-insufficient-data">Done - Unable to evaluate, insufficient data!</option>
+      </optgroup>
+
+      <optgroup label="Cancelled">
+        <option value="cancelled-survey-request-denied">Cancelled - Survey Request Denied</option>
+        <option value="cancelled-not-our-expertise">Cancelled - Not Our Expertise</option>
+        <option value="cancelled-double-entry">Cancelled - Double Entry!</option>
+        <option value="cancelled-requester-cancelled">Cancelled - Requester cancelled the request!</option>
+      </optgroup>
+    </select>
+  </td>
+</tr>
+
+<tr>
+  <th>Remarks</th>
+  <td>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <textarea
+        value={selectedRequest?.remarks || ''}
+        onChange={(e) =>
+          setSelectedRequest((prev) => ({
+            ...prev,
+            remarks: e.target.value,
+          }))
+        }
+        placeholder="Add your comments or remarks here..."
+        rows={4}
+        style={{
+          width: '100%',
+          padding: '8px',
+          borderRadius: '4px',
+          border: '1px solid #ddd',
+          resize: 'vertical',
+          minHeight: '80px',
+          fontFamily: 'inherit',
+          backgroundColor: '#f9f9f9',
+          color: '#333',
+        }}
+      />
+      <button
+  onClick={async () => {
+    try {
+      // Validate input
+      if (!selectedRequest || !selectedRequest._id) {
+        throw new Error('No request selected');
+      }
+
+      // Trim remarks to remove excess whitespace
+      const trimmedRemarks = selectedRequest.remarks ? selectedRequest.remarks.trim() : '';
+
+      // Validate remarks length (optional)
+      if (trimmedRemarks.length === 0) {
+        alert('Please enter remarks before sending.');
+        return;
+      }
+
+      const response = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateRemarks`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important for sending cookies cross-origin
+        body: JSON.stringify({ 
+          remarks: trimmedRemarks 
+        }),
+      });
+
+      // Improved error handling
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const updatedRequest = await response.json();
+      
+      // Update state
+      setSelectedRequest(prevRequest => ({
+        ...prevRequest,
+        remarks: updatedRequest.remarks
+      }));
+      
+      setRequests((prevRequests) =>
+        prevRequests.map((req) =>
+          req._id === updatedRequest._id ? updatedRequest : req
+        )
+      );
+      
+      // Success notification (you might want to replace alert with a more elegant notification)
+      alert('Remarks saved successfully!');
+
+      // Optional: Clear the textarea after successful submission
+      setSelectedRequest(prevRequest => ({
+        ...prevRequest,
+        remarks: '' // Clear remarks after submission
+      }));
+
+    } catch (error) {
+      console.error('Failed to update remarks:', error);
+      
+      // More user-friendly error handling
+      if (error.message.includes('network')) {
+        alert('Network error. Please check your internet connection.');
+      } else {
+        alert(`Failed to save remarks: ${error.message}`);
+      }
+    }
+  }}
+  style={{
+    alignSelf: 'flex-end',
+    padding: '8px 16px',
+    backgroundColor: '#007BFF',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease', // Added hover effect
+    ':hover': {
+      backgroundColor: '#0056b3' // Slightly darker blue on hover
+    },
+    disabled: {
+      backgroundColor: '#6c757d', // Grey when disabled
+      cursor: 'not-allowed'
+    }
+  }}
+  disabled={!selectedRequest?.remarks || selectedRequest.remarks.trim().length === 0}
+>
+  Send Remarks
+</button>
+    </div>
+  </td>
+</tr>
+
+        </tbody>
+      </table>
+      <button onClick={closeModal} className="close-modal-btn">Close</button>
+    </div>
+  </div>
+)}
+
+
     </div>
   );
 }
