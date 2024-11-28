@@ -132,34 +132,59 @@ const getDetailedStatusClass = (detailedStatus) => {
     }
   };
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await fetch('http://193.203.162.228:5000/api/requests');
-        const data = await response.json();
-        setRequests(data);
-        
-        // If there's a selected request ID in localStorage, find and set it
-        const savedRequestId = localStorage.getItem('selectedRequestId');
-        if (savedRequestId) {
-          const savedRequest = data.find(req => req._id === savedRequestId);
-          if (savedRequest) {
-            setSelectedRequest(savedRequest);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching requests:', error);
-      }
-    };
+  // Add this at the top of your component, right after your state declarations
+useEffect(() => {
+  setRequests([]); // Clear requests when switching profiles
+  setLoading(true); // Reset loading state
+  setError(null); // Clear any existing errors
+}, [evaluatorId]);
 
-    fetchRequests();
-  }, []);
-  
-  useEffect(() => {
-    if (selectedRequest) {
-      localStorage.setItem('selectedRequestId', selectedRequest._id);
+// Replace your existing fetchRequests useEffect with this one
+useEffect(() => {
+  const fetchRequests = async () => {
+    try {
+      const response = await fetch('http://193.203.162.228:5000/api/requests');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      
+      // Get the current evaluator's full name
+      const currentEvaluator = teamMembers[evaluatorId];
+      if (!currentEvaluator) {
+        throw new Error('Invalid evaluator ID');
+      }
+
+      // Filter requests strictly by the current evaluator's name
+      const filteredRequests = data.filter(request => {
+        const assignedTo = request.assignedTo ? request.assignedTo.trim() : '';
+        return assignedTo.toLowerCase() === currentEvaluator.toLowerCase();
+      });
+      
+      console.log(`Filtered requests for ${currentEvaluator}:`, filteredRequests);
+      
+      setRequests(filteredRequests);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching requests:', err);
+      setError(err.message);
+      setRequests([]); // Clear requests on error
+    } finally {
+      setLoading(false);
     }
-  }, [selectedRequest]);
+  };
+
+  if (evaluatorId) {
+    fetchRequests();
+  }
+}, [evaluatorId, teamMembers]); // Added teamMembers as dependency
+
+// Add this cleanup effect
+useEffect(() => {
+  return () => {
+    localStorage.removeItem('selectedRequestId');
+  };
+}, []);
   
 
 
@@ -174,23 +199,47 @@ const getDetailedStatusClass = (detailedStatus) => {
         console.error(err.message);
       }
     };
-
+  
     const fetchRequests = async () => {
+      setLoading(true); // Ensure loading state is set before fetching
       try {
-        const response = await fetch(`http://193.203.162.228:5000/api/requests?assignedTo=${teamMember}`);
+        const response = await fetch('http://193.203.162.228:5000/api/requests');
         if (!response.ok) throw new Error('Failed to fetch requests');
         const data = await response.json();
-        setRequests(data);
+        
+        // Debugging: log all requests and current team member
+        console.log('All Requests:', data);
+        console.log('Current Team Member:', teamMembers[evaluatorId]);
+        console.log('Evaluator ID:', evaluatorId);
+  
+        // Ensure we use the full name from teamMembers object
+        const currentTeamMember = teamMembers[evaluatorId] || "Unknown Evaluator";
+        
+        // More robust filtering with case-insensitive and trim comparison
+        const filteredRequests = data.filter(request => {
+          const assignedTo = request.assignedTo ? request.assignedTo.trim().toLowerCase() : '';
+          const teamMemberLower = currentTeamMember.trim().toLowerCase();
+          return assignedTo === teamMemberLower;
+        });
+  
+        console.log('Filtered Requests:', filteredRequests);
+        
+        setRequests(filteredRequests);
+        setError(null); // Clear any previous errors
       } catch (err) {
+        console.error('Fetch Requests Error:', err);
         setError(err.message);
+        setRequests([]); // Ensure requests are cleared on error
       } finally {
         setLoading(false);
       }
     };
-
+  
+    // Call both functions
     fetchProfile();
     fetchRequests();
-  }, [teamMember, evaluatorId]);
+  }, [evaluatorId]); 
+  // Dependency on evaluatorId ensures re-fetch when profile changes
 
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
@@ -600,10 +649,37 @@ const getDetailedStatusClass = (detailedStatus) => {
   </td>
 </tr>
 
+{/* Remarks Section */}
 <tr>
   <th>Remarks</th>
   <td>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {/* Display previous remarks if they exist */}
+      {selectedRequest?.previousRemarks && selectedRequest.previousRemarks.length > 0 && (
+        <div style={{
+          marginBottom: '12px',
+          padding: '8px',
+          backgroundColor: '#f0f0f0',
+          borderRadius: '4px',
+          maxHeight: '150px',
+          overflowY: 'auto'
+        }}>
+          {selectedRequest.previousRemarks.map((remark, index) => (
+            <div key={index} style={{
+              padding: '8px',
+              borderBottom: index < selectedRequest.previousRemarks.length - 1 ? '1px solid #ddd' : 'none',
+              fontSize: '14px'
+            }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                {new Date(remark.timestamp).toLocaleString()}
+              </div>
+              <div>{remark.text}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* New remarks textarea */}
       <textarea
         value={selectedRequest?.remarks || ''}
         onChange={(e) =>
@@ -624,99 +700,162 @@ const getDetailedStatusClass = (detailedStatus) => {
           fontFamily: 'inherit',
           backgroundColor: '#f9f9f9',
           color: '#333',
+          fontSize: '14px',
+          lineHeight: '1.5'
         }}
       />
-      <button
-  onClick={async () => {
-    try {
-      // Validate input
-      if (!selectedRequest || !selectedRequest._id) {
-        throw new Error('No request selected');
-      }
 
-      // Trim remarks to remove excess whitespace
-      const trimmedRemarks = selectedRequest.remarks ? selectedRequest.remarks.trim() : '';
+      {/* Character count */}
+      <div style={{
+        fontSize: '12px',
+        color: '#666',
+        alignSelf: 'flex-end',
+        marginTop: '-4px'
+      }}>
+        {selectedRequest?.remarks?.length || 0}/1000 characters
+      </div>
 
-      // Validate remarks length (optional)
-      if (trimmedRemarks.length === 0) {
-        alert('Please enter remarks before sending.');
-        return;
-      }
+      {/* Submit button */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        gap: '8px'
+      }}>
+        <button
+          onClick={() => {
+            setSelectedRequest(prev => ({
+              ...prev,
+              remarks: ''
+            }));
+          }}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#6c757d',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+          }}
+        >
+          Clear
+        </button>
 
-      const response = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateRemarks`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Important for sending cookies cross-origin
-        body: JSON.stringify({ 
-          remarks: trimmedRemarks 
-        }),
-      });
+        <button
+          onClick={async () => {
+            try {
+              if (!selectedRequest || !selectedRequest._id) {
+                throw new Error('No request selected');
+              }
 
-      // Improved error handling
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
+              const trimmedRemarks = selectedRequest.remarks ? selectedRequest.remarks.trim() : '';
 
-      const updatedRequest = await response.json();
-      
-      // Update state
-      setSelectedRequest(prevRequest => ({
-        ...prevRequest,
-        remarks: updatedRequest.remarks
-      }));
-      
-      setRequests((prevRequests) =>
-        prevRequests.map((req) =>
-          req._id === updatedRequest._id ? updatedRequest : req
-        )
-      );
-      
-      // Success notification (you might want to replace alert with a more elegant notification)
-      alert('Remarks saved successfully!');
+              if (trimmedRemarks.length === 0) {
+                alert('Please enter remarks before sending.');
+                return;
+              }
 
-      // Optional: Clear the textarea after successful submission
-      setSelectedRequest(prevRequest => ({
-        ...prevRequest,
-        remarks: '' // Clear remarks after submission
-      }));
+              if (trimmedRemarks.length > 1000) {
+                alert('Remarks cannot exceed 1000 characters.');
+                return;
+              }
 
-    } catch (error) {
-      console.error('Failed to update remarks:', error);
-      
-      // More user-friendly error handling
-      if (error.message.includes('network')) {
-        alert('Network error. Please check your internet connection.');
-      } else {
-        alert(`Failed to save remarks: ${error.message}`);
-      }
-    }
-  }}
-  style={{
-    alignSelf: 'flex-end',
-    padding: '8px 16px',
-    backgroundColor: '#007BFF',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '14px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease', // Added hover effect
-    ':hover': {
-      backgroundColor: '#0056b3' // Slightly darker blue on hover
-    },
-    disabled: {
-      backgroundColor: '#6c757d', // Grey when disabled
-      cursor: 'not-allowed'
-    }
-  }}
-  disabled={!selectedRequest?.remarks || selectedRequest.remarks.trim().length === 0}
->
-  Send Remarks
-</button>
+              const response = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateRemarks`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                  remarks: trimmedRemarks,
+                  timestamp: new Date().toISOString()
+                }),
+              });
+
+              if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error response:', errorText);
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+              }
+
+              const updatedRequest = await response.json();
+              
+              // Update state with new remarks history
+              setSelectedRequest(prevRequest => ({
+                ...prevRequest,
+                remarks: '',
+                previousRemarks: [
+                  ...(prevRequest.previousRemarks || []),
+                  { text: trimmedRemarks, timestamp: new Date().toISOString() }
+                ]
+              }));
+              
+              setRequests((prevRequests) =>
+                prevRequests.map((req) =>
+                  req._id === updatedRequest._id ? {
+                    ...updatedRequest,
+                    previousRemarks: [
+                      ...(req.previousRemarks || []),
+                      { text: trimmedRemarks, timestamp: new Date().toISOString() }
+                    ]
+                  } : req
+                )
+              );
+              
+              // Show success message
+              const successMessage = document.createElement('div');
+              successMessage.textContent = 'Remarks saved successfully!';
+              successMessage.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #28a745;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 4px;
+                z-index: 1000;
+                animation: fadeOut 3s forwards;
+              `;
+              document.body.appendChild(successMessage);
+              setTimeout(() => successMessage.remove(), 3000);
+
+            } catch (error) {
+              console.error('Failed to update remarks:', error);
+              
+              if (error.message.includes('network')) {
+                alert('Network error. Please check your internet connection.');
+              } else {
+                alert(`Failed to save remarks: ${error.message}`);
+              }
+            }
+          }}
+          style={{
+            padding: '8px 16px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+            opacity: (!selectedRequest?.remarks || selectedRequest.remarks.trim().length === 0) ? '0.6' : '1',
+          }}
+          disabled={!selectedRequest?.remarks || selectedRequest.remarks.trim().length === 0}
+        >
+          Send Remarks
+        </button>
+      </div>
+
+      {/* Add styles for the fadeOut animation */}
+      <style>
+        {`
+          @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+          }
+        `}
+      </style>
     </div>
   </td>
 </tr>
