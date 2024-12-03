@@ -9,6 +9,7 @@ import Dashboard from './Components/Dashboard';
 import AllRequests from './Components/AllRequests'; // Import the AllRequests component
 import Supplier from './Components/Supplier'; // Import the Supplier component
 import List from './Components/List'; // Import the List component (for the supplier master list)
+import Pi from './Components/Pi'; // Import the Pi component for PI Monitoring
 
 function App() {
   return (
@@ -34,10 +35,13 @@ function App() {
           <Route path="/all-requests" element={<AllRequests />} />
 
           {/* New route for SUPPLIER MASTER LIST */}
-          <Route path="/supplier-master-list" element={<Supplier />} /> {/* Add this line */}
+          <Route path="/supplier-master-list" element={<Supplier />} /> 
 
           {/* Route for the Supplier List (this will display the supplier master list) */}
-          <Route path="/list" element={<List />} />  {/* Add the List route */}
+          <Route path="/list" element={<List />} />  
+
+          {/* Route for PI Monitoring */}
+          <Route path="/pi-monitoring" element={<Pi />} /> {/* Add this line */}
 
           {/* Consolidated route for all evaluators */}
           <Route path="/dashboard/evaluator/:evaluatorId" element={<EvaluatorDashboard />} />

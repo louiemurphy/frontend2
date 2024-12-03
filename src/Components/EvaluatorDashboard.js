@@ -47,31 +47,34 @@ const getStatusClass = (status) => {
       return '';
   }
 };
+
+// Update the getDetailedStatusClass function:
 const getDetailedStatusClass = (detailedStatus) => {
-  if (!detailedStatus) return 'detailed-status-pending';
+  if (!detailedStatus || detailedStatus === '') return 'detailed-status-pending';  // Changed to check for empty string
   if (detailedStatus === 'on-going') return 'detailed-status-ongoing';
   if (detailedStatus.startsWith('done-')) return 'detailed-status-done';
   if (detailedStatus.startsWith('cancelled-')) return 'detailed-status-cancelled';
   return 'detailed-status-pending';
 };
 
-  // Helper function to map detailed status to main status
-  const getMainStatus = (detailedStatus) => {
-    if (!detailedStatus) return 0; // Default to Pending
+// Update the getMainStatus function:
+const getMainStatus = (detailedStatus) => {
+  if (!detailedStatus || detailedStatus === '') return 0; // Changed to check for empty string
+  
+  // Map detailed statuses to main statuses
+  if (detailedStatus === 'on-going') {
+    return 1; // Ongoing
+  } else if (detailedStatus.startsWith('cancelled-')) {
+    return 3; // Canceled
+  } else if (detailedStatus.startsWith('done-')) {
+    return 2; // Completed
+  } else {
+    return 0; // Default to Pending
+  }
+};
 
-    // Map detailed statuses to main statuses
-    if (detailedStatus === 'on-going') {
-      return 1; // Ongoing
-    } else if (detailedStatus.startsWith('cancelled-')) {
-      return 3; // Canceled
-    } else if (detailedStatus.startsWith('done-')) {
-      return 2; // Completed
-    } else {
-      return 0; // Pending
-    }
-  };
-
-  const handleStatusChanged = async (event) => {
+  // Update the handleStatusChanged function:
+const handleStatusChanged = async (event) => {
     const selectedDetailedStatus = event.target.value;
     
     if (!selectedRequest) {
@@ -79,23 +82,31 @@ const getDetailedStatusClass = (detailedStatus) => {
       return;
     }
 
-    // Get the corresponding main status
-    const mainStatus = getMainStatus(selectedDetailedStatus);
-    
     try {
       // First, update the detailed status
+      // Convert empty string to null or a specific value that your backend expects
+      const detailedStatusToSend = selectedDetailedStatus || null;  // or use empty string directly if backend handles it
+      
       const detailedResponse = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateDetailedStatus`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ detailedStatus: selectedDetailedStatus }),
+        body: JSON.stringify({ 
+          detailedStatus: detailedStatusToSend,
+          // Add a timestamp for tracking when status was changed
+          statusChangedAt: new Date().toISOString()
+        }),
       });
 
       if (!detailedResponse.ok) {
-        throw new Error('Failed to update detailed status');
+        const errorText = await detailedResponse.text();
+        throw new Error(`Detailed status update failed: ${errorText}`);
       }
 
+      // Get the corresponding main status
+      const mainStatus = getMainStatus(selectedDetailedStatus);
+      
       // Then, update the main status
       const mainResponse = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}`, {
         method: 'PUT',
@@ -106,11 +117,15 @@ const getDetailedStatusClass = (detailedStatus) => {
           status: mainStatus,
           completedAt: mainStatus === 2 ? new Date().toISOString() : null,
           canceledAt: mainStatus === 3 ? new Date().toISOString() : null,
+          // Add status change metadata
+          lastStatusUpdate: new Date().toISOString(),
+          previousStatus: selectedRequest.status
         }),
       });
 
       if (!mainResponse.ok) {
-        throw new Error('Failed to update main status');
+        const errorText = await mainResponse.text();
+        throw new Error(`Main status update failed: ${errorText}`);
       }
 
       const updatedRequest = await mainResponse.json();
@@ -120,17 +135,26 @@ const getDetailedStatusClass = (detailedStatus) => {
         const updatedRequests = prevRequests.map((req) =>
           req._id === updatedRequest._id ? updatedRequest : req
         );
-        localStorage.setItem('requests', JSON.stringify(updatedRequests));
         return updatedRequests;
       });
 
       setSelectedRequest(updatedRequest);
-      alert(`Request status updated to: ${selectedDetailedStatus}`);
+      
+      // Show success message with status details
+      alert(`Request status successfully updated to: ${selectedDetailedStatus || 'Pending'}`);
+      
     } catch (error) {
       console.error('Status update error:', error);
-      alert(`Status update failed: ${error.message}`);
+      // Provide more detailed error message
+      alert(`Status update failed: ${error.message}\nPlease try again or contact support if the problem persists.`);
+      
+      // Revert the select to previous value
+      setSelectedRequest(prev => ({
+        ...prev,
+        detailedStatus: prev.detailedStatus
+      }));
     }
-  };
+};
 
   // Add this at the top of your component, right after your state declarations
 useEffect(() => {
@@ -599,55 +623,55 @@ useEffect(() => {
 
           {/* Status Update Section */}
           <tr>
-  <th>Status Update</th>
-  <td>
+    <th>Status Update</th>
+    <td>
     <select 
-      value={selectedRequest?.detailedStatus || ''} 
-      onChange={handleStatusChanged}
-      className={`detailed-status-select ${getDetailedStatusClass(selectedRequest?.detailedStatus)}`}
-    >
-      <option value="">Select Status</option>
-      <option value="on-going">On Going</option>
-      
-      <optgroup label="Done - Approved">
-        <option value="done-system-sizing">Done - System Sizing</option>
-        <option value="done-request-approved">Done - Request Approved. For Schedule</option>
-        <option value="done-quotation-submitted">Done - Quotation submitted</option>
-        <option value="done-technical-docs-turnover">Done - Technical documents turnover done</option>
-        <option value="done-proposal-approved">Done - Proposal Approved! Proceed for submission</option>
-        <option value="done-survey-request-approved">Done - Survey request approved! arrangement done</option>
-        <option value="done-go-proceed-bidding">Done - Go, Proceed to bidding!</option>
-        <option value="done-go-suggest-negotiate">Done - Go, Suggest to Negotiate!</option>
-      </optgroup>
+    value={selectedRequest?.detailedStatus || ''} // Changed to use empty string as default
+    onChange={handleStatusChanged}
+    className={`detailed-status-select ${getDetailedStatusClass(selectedRequest?.detailedStatus)}`}
+>
+    <option value="">Pending</option>
+    <option value="on-going">On Going</option>
+    
+    <optgroup label="Done - Approved">
+          <option value="done-system-sizing">Done - System Sizing</option>
+          <option value="done-request-approved">Done - Request Approved. For Schedule</option>
+          <option value="done-quotation-submitted">Done - Quotation submitted</option>
+          <option value="done-technical-docs-turnover">Done - Technical documents turnover done</option>
+          <option value="done-proposal-approved">Done - Proposal Approved! Proceed for submission</option>
+          <option value="done-survey-request-approved">Done - Survey request approved! arrangement done</option>
+          <option value="done-go-proceed-bidding">Done - Go, Proceed to bidding!</option>
+          <option value="done-go-suggest-negotiate">Done - Go, Suggest to Negotiate!</option>
+        </optgroup>
 
-      <optgroup label="Done - No Go">
-        <option value="done-no-go-supplier-acquisition">Done - No Go - Supplier Acquisition Problem</option>
-        <option value="done-no-go-bidding-team-directives">Done - No Go, Bidding Team Directives!</option>
-        <option value="done-no-go-certificate">Done - No Go, Unable to provide certificates!</option>
-        <option value="done-no-go-specifications">Done - No Go, Unable to meet specifications!</option>
-        <option value="done-no-go-short-lead-time">Done - No Go, Short Delivery Lead Time!</option>
-        <option value="done-no-go-breakeven">Done - No Go, Breakeven!</option>
-        <option value="done-no-go-profitability">Done - No Go, Below 20% Profitabilty!</option>
-        <option value="done-no-go-negative-profit">Done - No Go, Negative Profit!</option>
-      </optgroup>
+        <optgroup label="Done - No Go">
+          <option value="done-no-go-supplier-acquisition">Done - No Go - Supplier Acquisition Problem</option>
+          <option value="done-no-go-bidding-team-directives">Done - No Go, Bidding Team Directives!</option>
+          <option value="done-no-go-certificate">Done - No Go, Unable to provide certificates!</option>
+          <option value="done-no-go-specifications">Done - No Go, Unable to meet specifications!</option>
+          <option value="done-no-go-short-lead-time">Done - No Go, Short Delivery Lead Time!</option>
+          <option value="done-no-go-breakeven">Done - No Go, Breakeven!</option>
+          <option value="done-no-go-profitability">Done - No Go, Below 20% Profitabilty!</option>
+          <option value="done-no-go-negative-profit">Done - No Go, Negative Profit!</option>
+        </optgroup>
 
-      <optgroup label="Done - Other">
-        <option value="done-suggest-buy-bid-docs">Done - Suggest to buy bid docs for further evaluation</option>
-        <option value="done-proposal-disapproved">Done - Proposal disapproved! Need further assessment</option>
-        <option value="done-unable-evaluate-late-request">Done - Unable to evaluate, late request!</option>
-        <option value="done-unable-evaluate-multiple-requests">Done - Unable to evaluate, multiple requests!</option>
-        <option value="done-unable-evaluate-insufficient-data">Done - Unable to evaluate, insufficient data!</option>
-      </optgroup>
+        <optgroup label="Done - Other">
+          <option value="done-suggest-buy-bid-docs">Done - Suggest to buy bid docs for further evaluation</option>
+          <option value="done-proposal-disapproved">Done - Proposal disapproved! Need further assessment</option>
+          <option value="done-unable-evaluate-late-request">Done - Unable to evaluate, late request!</option>
+          <option value="done-unable-evaluate-multiple-requests">Done - Unable to evaluate, multiple requests!</option>
+          <option value="done-unable-evaluate-insufficient-data">Done - Unable to evaluate, insufficient data!</option>
+        </optgroup>
 
-      <optgroup label="Cancelled">
-        <option value="cancelled-survey-request-denied">Cancelled - Survey Request Denied</option>
-        <option value="cancelled-not-our-expertise">Cancelled - Not Our Expertise</option>
-        <option value="cancelled-double-entry">Cancelled - Double Entry!</option>
-        <option value="cancelled-requester-cancelled">Cancelled - Requester cancelled the request!</option>
-      </optgroup>
-    </select>
-  </td>
-</tr>
+        <optgroup label="Cancelled">
+          <option value="cancelled-survey-request-denied">Cancelled - Survey Request Denied</option>
+          <option value="cancelled-not-our-expertise">Cancelled - Not Our Expertise</option>
+          <option value="cancelled-double-entry">Cancelled - Double Entry!</option>
+          <option value="cancelled-requester-cancelled">Cancelled - Requester cancelled the request!</option>
+        </optgroup>
+      </select>
+    </td>
+  </tr>
 
 {/* Remarks Section */}
 <tr>

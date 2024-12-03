@@ -96,7 +96,7 @@
     padding: 10px 15px; /* Add padding for a better clickable area */
     cursor: pointer; /* Change cursor to pointer when hovering */
     transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth transition effects */
-    padding-top: 400px; /* Add some space above */
+    padding-top: 350px; /* Add some space above */
   }
   
   /* Hover effect for the menu-item2 */

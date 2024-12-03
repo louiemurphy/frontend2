@@ -1,0 +1,357 @@
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Variables for Consistent Theming */
+:root {
+  --primary-color: #007bff;
+  --primary-hover-color: #0056b3;
+  --success-color: #28a745;
+  --success-hover-color: #218838;
+  --background-light: #f9f9f9;
+  --background-subtle: #f4f4f4;
+  --text-dark: #333;
+  --text-muted: #444;
+  --border-color: #ddd;
+  --border-radius: 4px;
+  --transition-speed: 0.3s;
+}
+
+.form-container {
+  position: relative;
+  max-width: 100%;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Typography and Header Styles */
+.form-title {
+  font-size: 2rem;
+  text-align: center;
+  padding: 15px;
+  background-color: var(--background-subtle);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-section-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e0e0e0;
+  color: var(--text-dark);
+}
+
+
+
+/* Button Container */
+.button-container1 {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  position: fixed;         /* Fixed positioning */
+  top: 50%;                 /* Center vertically */
+  left: 50%;                /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for exact center */
+  z-index: 20;             /* Ensure it's above other elements */
+  width: auto;             /* Auto width to fit the button */
+}
+
+/* Toggle Button Style */
+.toggle-button1 {
+  padding: 15px 30px;      /* Increased padding for better visibility */
+  background-color: #1e90ff; /* Dodger Blue */
+  color: white;
+  border: none;
+  border-radius: 10px;     /* Slightly rounded corners */
+  font-size: 1.25rem;
+  font-weight: 600;        /* Added font weight for emphasis */
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition for all properties */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+  text-transform: uppercase; /* Uppercase text for more impact */
+  letter-spacing: 1px;     /* Slight letter spacing */
+}
+
+/* Hover effect for the button */
+.toggle-button1:hover {
+  background-color: #005cbf;
+}
+
+/* Button Styles */
+.toggle-button,
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease;
+  font-size: 1rem;
+}
+
+/* Position the button at the end of the container */
+.parent-container {
+  position: relative; /* Ensure parent container has positioning context */
+}
+
+/* Container for the Close Button */
+.button-container3 {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  position: fixed;         /* Position fixed to the viewport */
+  top: 20px;               /* 20px from the top */
+  right: 20px;             /* 20px from the right */
+  z-index: 1000;           /* Ensure it stays on top */
+}
+
+/* Close Button Style */
+.toggle-button3 {
+  background-color: #2c3e50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease;
+  font-size: 1rem;
+  position: relative; /* Keep it in the normal flow (relative to the container) */
+  z-index: 20;        /* Ensure visibility */
+  right: 20px;
+}
+
+/* Hover effect for the button */
+.toggle-button3:hover {
+  background-color: #2c3e50;
+}
+
+.submit-button {
+  width: auto;
+  padding: 10px 20px;  /* Increased padding */
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 1rem;  /* Restored to original size */
+  transition: background-color var(--transition-speed) ease;
+  position: sticky; /* Changed from absolute to sticky */
+  bottom: 20px; /* Positioned at the bottom with some padding */
+  align-self: flex-end;  /* Align to the right */
+  margin-top: 20px; /* Added margin to ensure visibility */
+  z-index: 10; /* Ensure it stays on top of other content */
+}
+
+.submit-button:hover {
+  background-color: #2c3e50;
+}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-container {
+    padding: 10px;
+  }
+
+  .submit-button {
+    width: 100%; /* Full width on smaller screens */
+    position: static; /* Reset positioning on mobile */
+  }
+}
+
+/* Form Layout */
+.form {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: var(--background-light);
+  position: relative; /* Added to ensure proper positioning */
+}
+
+.form-section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 20px; /* Added extra margin before submit button */
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.file-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Adds spacing between file label and input */
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.file-label:hover {
+  background-color: #e0e0e0;
+}
+
+.file-label-text {
+  margin-left: 0.5rem;
+}
+
+.form-label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 14px;
+  display: block;
+  white-space: nowrap;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.required-marker {
+  color: red;
+}
+
+
+/* Input and Select Styles */
+.form-input,
+.file-label,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.form-input:focus,
+.file-label:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+/* File Input Styles */
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.file-label:hover {
+  background-color: #e9ecef;
+}
+
+.file-icon {
+  color: #666;
+}
+
+.file-label-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Select Dropdown Styles */
+.relative {
+  position: relative;
+}
+
+.chevron-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6c757d;
+}
+
+/* Scrollbar Styling for Webkit Browsers */
+.form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.form::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.form::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-container {
+    padding: 10px;
+  }
+}
+
+.relative {
+  position: relative;
+}
+
+select.form-input {
+  appearance: none; /* Removes the native dropdown arrow */
+  padding-right: 30px; /* Adds space for the chevron */
+}
+
+.chevron-icon {
+  position: absolute;
+  right: 10px;
+  top: 35%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Ensures it doesn't block interactions */
+  color: #6c757d;
+}
