@@ -279,22 +279,25 @@ function AdminDashboard() {
           throw new Error('Failed to fetch requests');
         }
         const data = await response.json();
-        setRequests(data);
+    
+        // Set initial status to 0 (Pending) and detailedStatus to 'Pending' if they are missing
+        const updatedRequests = data.map(request => ({
+          ...request,
+          status: request.status ?? 0, // Default to 0 (Pending) if not set
+          detailedStatus: request.detailedStatus ?? 'Pending', // Default to 'Pending' if not set
+        }));
+    
+        setRequests(updatedRequests);
         setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
       }
     };
-
-    // Retrieve the saved page number from localStorage
-    const savedPage = localStorage.getItem('currentPage');
-    if (savedPage) {
-      setCurrentPage(Number(savedPage)); // Set the current page to the saved value
-    }
-
+  
     fetchRequests();
   }, []);
+  
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -345,16 +348,39 @@ function AdminDashboard() {
     const completedAt = newStatus === 2 ? new Date().toISOString() : null;
     const cancelledAt = newStatus === 3 ? new Date().toISOString() : null;
   
+    // Map the status to a detailed status
+    let detailedStatus = '';
+    switch (newStatus) {
+      case 0:
+        detailedStatus = 'Pending';
+        break;
+      case 1:
+        detailedStatus = 'Ongoing';
+        break;
+      case 2:
+        detailedStatus = 'Completed';
+        break;
+      case 3:
+        detailedStatus = 'Cancelled';
+        break;
+      default:
+        detailedStatus = 'Pending'; // Changed default to Pending
+    }
+  
     try {
+      // Update status and detailedStatus locally in the state
       const updatedRequests = requests.map((request) =>
-        request._id === requestId ? { ...request, status: newStatus, completedAt, cancelledAt } : request
+        request._id === requestId
+          ? { ...request, status: newStatus, detailedStatus, completedAt, cancelledAt }
+          : request
       );
       setRequests(updatedRequests);
   
+      // Update status and detailedStatus on the server
       const response = await fetch(`http://193.203.162.228:5000/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus, completedAt, cancelledAt }), // Send both dates
+        body: JSON.stringify({ status: newStatus, detailedStatus, completedAt, cancelledAt }),
       });
   
       if (!response.ok) {
@@ -364,6 +390,8 @@ function AdminDashboard() {
       console.error('Error updating status:', err);
     }
   };
+  
+  
   
   
   
@@ -490,8 +518,11 @@ const filteredRequests = requests.filter((request) => {
                 <tr>
   <th>Status</th>
   <td>
-    {selectedRequest?.detailedStatus || 'No Status Available'}
+    {selectedRequest?.detailedStatus === undefined || selectedRequest?.detailedStatus === null 
+      ? 'Pending' 
+      : selectedRequest.detailedStatus}
   </td>
+
 </tr>
 <tr>
   <th>Remarks</th>

@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { FaCheckCircle, FaClock, FaExclamationCircle, FaBan, FaQuestionCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'; // useNavigate instead of useHistory
 
 const Dashboard = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('');
+  const navigate = useNavigate(); // Create navigate object for navigation
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -48,36 +50,27 @@ const Dashboard = () => {
     });
   }, [requests, selectedMonth]);
 
-  // Function to process requests data for charts
   const processChartData = () => {
     const chartData = [];
 
-    // Loop through the requests and group them by month
     filteredRequests.forEach((request) => {
       const requestDate = new Date(request.timestamp);
-      const month = requestDate.toLocaleString('default', { month: 'short' }); // Get the short month name
+      const month = requestDate.toLocaleString('default', { month: 'short' });
 
-      // Find or create the data object for the current month
       let monthData = chartData.find(data => data.month === month);
       if (!monthData) {
         monthData = { month, delayed: 0, onTime: 0, total: 0, completed: 0 };
         chartData.push(monthData);
       }
 
-      // Increment the counts based on the request status and timing
       monthData.total += 1;
-      if (request.status === 2) { // Completed
+      if (request.status === 2) {
         monthData.completed += 1;
-      }
-
-      if (request.status === 3) { // Canceled
-        // You can also track canceled requests if needed
       }
 
       const dateNeeded = new Date(request.dateNeeded);
       const completedAt = new Date(request.completedAt);
 
-      // Check if the request is delayed (if the completed date is after the needed date)
       if (completedAt > dateNeeded) {
         monthData.delayed += 1;
       } else {
@@ -88,7 +81,7 @@ const Dashboard = () => {
     return chartData;
   };
 
-  const chartData = processChartData(); // Process the data for charts
+  const chartData = processChartData();
 
   const calculateStats = () => {
     const total = filteredRequests.length;
@@ -110,6 +103,10 @@ const Dashboard = () => {
     return { total, completionRate, efficiencyRate, delayedRate, canceledRate };
   };
 
+  const handleBackToHome = () => {
+    navigate('/dashboard/admin'); // Use navigate to go back to home page
+  };
+
   if (loading) {
     return <div>Loading dashboard...</div>;
   }
@@ -122,6 +119,14 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      {/* Back button */}
+      <button 
+        className="sidebar-back-to-home-button" 
+        onClick={handleBackToHome}
+      >
+        ← Back to Home
+      </button>
+
       <div className="month-filter">
         <label>Filter by Month:</label>
         <select

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './Supplier.css'; // Ensure custom styles for dropdown
-import axios from 'axios'; // For sending requests to your backend
-import moment from 'moment'; // Import moment for date formatting
+import './Supplier.css'; 
+import axios from 'axios'; 
+import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 function Supplier() {
   const [totalSuppliers, setTotalSuppliers] = useState(0);
@@ -11,38 +12,43 @@ function Supplier() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-    // Pagination states
-    const [currentPage, setCurrentPage] = useState(1);
-    const suppliersPerPage = 4; //// Change this to the number of suppliers you want to display per page
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const suppliersPerPage = 4;
 
-    useEffect(() => {
-      const fetchSuppliers = async () => {
-        setLoading(true);
-        try {
-          const response = await axios.get('http://193.203.162.228:5000/api/suppliers');
-          const formattedData = response.data.map((supplier) => ({
-            ...supplier,
-            timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
-          }));
-    
-          // Sort suppliers by timestamp in descending order (newest first)
-          formattedData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
-          setSuppliersData(formattedData);
-          setTotalSuppliers(formattedData.length);
-          setNewSuppliers(formattedData.filter(supplier => new Date(supplier.timestamp) > Date.now() - 30 * 24 * 60 * 60 * 1000).length);
-        } catch (error) {
-          console.error('Error fetching suppliers:', error);
-          setError('Failed to load suppliers data.');
-        } finally {
-          setLoading(false);
-        }
-      };
-    
-      fetchSuppliers();
-    }, []);
-     
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get('http://193.203.162.228:5000/api/suppliers');
+        const formattedData = response.data.map((supplier) => ({
+          ...supplier,
+          timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
+        }));
+  
+        // Sort suppliers by timestamp in descending order (newest first)
+        formattedData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
+        setSuppliersData(formattedData);
+        setTotalSuppliers(formattedData.length);
+        setNewSuppliers(formattedData.filter(supplier => new Date(supplier.timestamp) > Date.now() - 30 * 24 * 60 * 60 * 1000).length);
+      } catch (error) {
+        console.error('Error fetching suppliers:', error);
+        setError('Failed to load suppliers data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchSuppliers();
+  }, []);
+
+  const handleBackToHome = () => {
+    navigate('/dashboard/admin');  // Updated to match the exact admin dashboard route
+  };
+  
   const handleCreateClick = () => {
     setIsFormVisible(true);
   };
@@ -80,7 +86,7 @@ function Supplier() {
         timestamp: moment(response.data.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
       };
 
-      setSuppliersData((prevSuppliers) => [...prevSuppliers, formattedSupplier]);
+      setSuppliersData((prevSuppliers) => [formattedSupplier, ...prevSuppliers]);
       setTotalSuppliers((prevTotal) => prevTotal + 1);
       setNewSuppliers((prevNew) => prevNew + 1);
       setIsFormVisible(false);
@@ -93,17 +99,25 @@ function Supplier() {
       setLoading(false);
     }
   };
-    // Get the suppliers for the current page
-    const indexOfLastSupplier = currentPage * suppliersPerPage;
-    const indexOfFirstSupplier = indexOfLastSupplier - suppliersPerPage;
-    const currentSuppliers = suppliersData.slice(indexOfFirstSupplier, indexOfLastSupplier);
-  
-    // Change page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Get the suppliers for the current page
+  const indexOfLastSupplier = currentPage * suppliersPerPage;
+  const indexOfFirstSupplier = indexOfLastSupplier - suppliersPerPage;
+  const currentSuppliers = suppliersData.slice(indexOfFirstSupplier, indexOfLastSupplier);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className="supplier-master-list-wrapper1">
-      <div className="supplier-sidebar1"></div>
+      <div className="supplier-sidebar1">
+        <button 
+          className="sidebar-back-to-home-button" 
+          onClick={handleBackToHome}
+        >
+          ← Back to Home
+        </button>
+      </div>
       <div className="supplier-content1">
         <div className="supplier-dashboard-summary1">
           <div className="supplier-dashboard-box1">
@@ -119,55 +133,56 @@ function Supplier() {
         <div className="supplier-table-container1">
           <div className="supplier-list-header1">
             <h2>SUPPLIER MASTER LIST</h2>
-            <button className="supplier-create-button1" onClick={handleCreateClick}>
+            <button 
+              className="supplier-create-button1" 
+              onClick={handleCreateClick}
+            >
               Create New Supplier
             </button>
           </div>
+
           <div className="pagination-wrapper">
-  <div className="pagination">
-    <button
-      onClick={() => paginate(currentPage - 1)}
-      disabled={currentPage === 1}
-    >
-      &lt;
-    </button>
-    <span className="pagination-info">
-      Page {currentPage} of {Math.ceil(totalSuppliers / suppliersPerPage)}
-    </span>
-    <button
-      onClick={() => paginate(currentPage + 1)}
-      disabled={currentPage === Math.ceil(totalSuppliers / suppliersPerPage)}
-    >
-      &gt;
-    </button>
-  </div>
-</div>
+            <div className="pagination">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lt;
+              </button>
+              <span className="pagination-info">
+                Page {currentPage} of {Math.ceil(totalSuppliers / suppliersPerPage)}
+              </span>
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === Math.ceil(totalSuppliers / suppliersPerPage)}
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
 
-          
-
-{loading ? (
-  <p>Loading suppliers...</p>
-) : error ? (
-  <p className="supplier-error-message1">{error}</p>
-) : (
-  <div className="supplier-table1">
-    <div className="supplier-table-header1">
-      <div>Timestamp</div>
-      <div>Email Address</div>
-      <div>Category</div>
-      <div>Location</div>
-    </div>
-    {currentSuppliers.map((supplier, index) => (
-      <div key={index} className="supplier-table-row1">
-        <div>{supplier.timestamp}</div>
-        <div>{supplier.email}</div>
-        <div>{supplier.category}</div>
-        <div>{supplier.location}</div>
-      </div>
-    ))}
-  </div>
-)}
-
+          {loading ? (
+            <p>Loading suppliers...</p>
+          ) : error ? (
+            <p className="supplier-error-message1">{error}</p>
+          ) : (
+            <div className="supplier-table1">
+              <div className="supplier-table-header1">
+                <div>Timestamp</div>
+                <div>Email Address</div>
+                <div>Category</div>
+                <div>Location</div>
+              </div>
+              {currentSuppliers.map((supplier, index) => (
+                <div key={index} className="supplier-table-row1">
+                  <div>{supplier.timestamp}</div>
+                  <div>{supplier.email}</div>
+                  <div>{supplier.category}</div>
+                  <div>{supplier.location}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {isFormVisible && (
@@ -181,14 +196,12 @@ function Supplier() {
                     <input type="email" name="email" required />
                   </div>
                   <div className="supplier-form-group1">
-                  <div className="supplier-form-group1">
                     <label>Classification:</label>
                     <select name="classification" required>
                       <option value="">Select Classification</option>
                       <option value="Import">Import</option>
                       <option value="Local">Local</option>
                     </select>
-                  </div>
                   </div>
                   <div className="supplier-form-group1">
                   <label>Category:</label>

@@ -1,132 +1,192 @@
-/* Sidebar Styling */
+/* Basic Sidebar Layout */
 .sidebar {
-    background: #2b3e50; /* Solid, more subtle background */
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 250px; /* Adjusted width */
-    padding: 15px;
-    z-index: 1000;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    color: #ecf0f1;
-    display: flex;
-    flex-direction: column;
+  background: linear-gradient(135deg, #1D2D50, #133B5C); /* Gradient for depth */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px;
+  padding: 20px 15px;
+  z-index: 1000;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2); /* Softer shadow */
+  color: #ecf0f1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  box-sizing: border-box; /* Consistent box sizing */
 }
 
-/* Sidebar Title */
+/* Title of Sidebar */
 .sidebar-title {
-    font-size: 1.6em;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #ecf0f1;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
-/* Menu List */
-.menu-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
+/* Sidebar Sections */
+.sidebar-section {
+  margin-bottom: 25px;
 }
 
-/* Menu Item Styling */
-.menu-item {
-    display: flex; 
-    align-items: center;
-    margin-bottom: 15px;
-    font-size: 1em;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s, color 0.2s;
-    width: 100%;
+.section-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: #bdc3c7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  padding-left: 10px;
 }
 
-/* Menu Icon Styling */
-.menu-icon {
-    margin-right: 8px;
-    font-size: 1em;
-    color: #bdc3c7;
+/* List Styles */
+.section-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Consistent spacing between menu items */
 }
 
-/* Hover Effect for Menu Item */
-.menu-item:hover {
-    background-color: #4d5c6a;
-}
-
-/* Active State for Menu Item */
-.menu-item.active {
-    background-color: #3c8e7e;
-    color: #ffffff;
-}
-
-/* Responsive Adjustment for Smaller Screens */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 180px; /* Reduced width for smaller screens */
-    }
-
-    .sidebar-title {
-        font-size: 1.4em;
-    }
-
-    .menu-item {
-        font-size: 0.9em;
-    }
-
-    .menu-icon {
-        font-size: 0.9em;
-    }
-}
-/* Sidebar container (assuming the parent container has flex layout) */
-.sidebar {
-    display: flex;
-    flex-direction: column; /* Arrange children vertically */
-    height: 100%; /* Ensure the sidebar takes the full height of its parent */
-  }
-  
-  /* Styling for the menu-item2 (Logout) */
+/* Menu Items */
+.menu-item,
 .menu-item2 {
-    display: flex;
-    align-items: center; /* Align icon and text vertically */
-    gap: 10px; /* Space between the icon and the text */
-    padding: 10px 15px; /* Add padding for a better clickable area */
-    cursor: pointer; /* Change cursor to pointer when hovering */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth transition effects */
-    padding-top: 350px; /* Add some space above */
+  display: flex;
+  align-items: center;
+  padding: 10px 12px; /* Consistent padding */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  box-sizing: border-box; /* Prevent layout shifts */
+  position: relative;
+  width: 100%; /* Ensure menu items span full width */
+}
+
+/* Icon and Menu Item Text */
+.menu-icon,
+.menu-item2 .icon {
+  margin-right: 10px;
+  font-size: 1.1em;
+  transition: color 0.3s ease;
+}
+
+/* Hover Effects */
+.menu-item:hover,
+.menu-item2:hover {
+  background-color: #4D5C6A; /* Background color on hover */
+  color: #fff;
+}
+
+/* Active Menu Item */
+.menu-item.active {
+  background-color: #3C8E7E;
+  color: #fff;
+}
+
+/* Logout Section */
+.sidebar-logout {
+  margin-top: auto; /* Pushes the logout section to the bottom */
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%; /* Ensures full width */
+}
+
+.menu-item2 a {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+/* Smooth Scrollbar Styling */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Body Fix for Horizontal Scrolling */
+body {
+  margin: 0;
+  overflow-x: hidden; /* Prevent page-level horizontal scroll */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px;
+    padding: 18px 12px;
   }
-  
-  /* Hover effect for the menu-item2 */
-  .menu-item2:hover {
-    color: white; /* White text when hovered */
+
+  .sidebar-title {
+    font-size: 1.3em;
   }
-  
-  /* Icon styling within the menu-item2 */
+
+  .section-title {
+    font-size: 0.9em;
+  }
+
+  .menu-item,
+  .menu-item2 {
+    font-size: 0.85em;
+    padding: 8px 10px;
+  }
+
+  .menu-icon,
   .menu-item2 .icon {
-    font-size: 1.5rem; /* Icon size */
-    color: rgb(152, 147, 147); /* Default color for the icon */
-    transition: color 0.3s ease; /* Smooth color transition */
+    font-size: 1em;
   }
-  
-  /* Change icon color on hover */
-  .menu-item2:hover .icon {
-    color: white; /* Change icon color to white on hover */
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 180px;
   }
-  
-  /* Link styling within the menu-item2 */
-  .menu-item2 a {
-    text-decoration: none;
-    color: inherit; /* Inherit color from the parent */
-    font-size: 1rem; /* Font size for the text */
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center; /* Align text with the icon */
+
+  .sidebar-title {
+    font-size: 1.2em;
   }
-  
-  /* Change link color on hover */
-  .menu-item2 a:hover {
-    color: white; /* White color on hover for the link text */
+
+  .section-title {
+    font-size: 0.85em;
   }
+
+  .menu-item,
+  .menu-item2 {
+    font-size: 0.8em;
+    padding: 7px 9px;
+  }
+
+  .menu-icon,
+  .menu-item2 .icon {
+    font-size: 0.9em;
+  }
+}
+
+/* Sidebar Collapse for Small Screens */
+@media (max-width: 576px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.4s ease-in-out;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}

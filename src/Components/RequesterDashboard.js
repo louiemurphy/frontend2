@@ -63,6 +63,14 @@ function RequesterDashboard() {
         throw new Error('Failed to fetch requests');
       }
       const data = await response.json();
+  
+      // If no requests are returned, reset local states
+      if (data.length === 0) {
+        setLastRefNumber(1);
+        saveLastRefNumberToLocalStorage(1);
+        localStorage.removeItem('requests');
+      }
+  
       setRequests(data); // Set fetched requests in the state
       saveRequestsToLocalStorage(data); // Save fetched requests to local storage
       setLoading(false); // Set loading to false after data is fetched
@@ -158,7 +166,7 @@ function RequesterDashboard() {
       if (!requestForm.typeOfClient) newErrors.typeOfClient = 'Please select the type of client';
       if (!requestForm.classification) newErrors.classification = 'Please select the classification';
       if (!requestForm.projectTitle) newErrors.projectTitle = 'Please enter the project title';
-      if (!requestForm.philgepsReferenceNumber) newErrors.philgepsReferenceNumber = 'Please enter the Philgeps reference number or NA';
+      
       if (!requestForm.productType) newErrors.productType = 'Please select the product type';
       if (!requestForm.requestType) newErrors.requestType = 'Please choose your request type';
       if (!requestForm.dateNeeded) newErrors.dateNeeded = 'Please select a date needed';
@@ -266,37 +274,7 @@ const handleSubmit = async (e) => {
   }
 };
 
-// Function to delete all requests
-const deleteAllRequests = async () => {
-  try {
-    // Step 1: Delete all requests from the database
-    const response = await fetch('http://193.203.162.228:5000/api/requests', {
-      method: 'DELETE', // Assuming you're deleting all requests with a DELETE method
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to delete requests');
-    }
-
-    // Step 2: Reset the last reference number to 1
-    setLastRefNumber(1); // Reset the reference number to 1 in the state
-    saveLastRefNumberToLocalStorage(1); // Save the reset reference number to localStorage
-
-    // Step 3: Fetch the updated list of requests (should be empty after deletion)
-    const updatedRequests = await fetch('http://193.203.162.228:5000/api/requests');
-    const requestsInDatabase = await updatedRequests.json();
-
-    if (requestsInDatabase.length === 0) {
-      // Ensure no old requests remain
-      setRequests([]); // Clear the request state
-    }
-
-    alert('All requests have been deleted, and the reference number has been reset to 0001');
-  } catch (error) {
-    console.error('Error deleting requests:', error);
-    alert('Error deleting requests. Please try again.');
-  }
-};
 
     
   const resetForm = () => {
@@ -448,7 +426,7 @@ const deleteAllRequests = async () => {
   <table className="request-table">
     <thead>
       <tr>
-        <th>REQID</th>
+      <th>REQID</th>
         <th>Name</th>
         <th>TIMESTAMP</th>
         <th>PROJECT TITLE</th>
@@ -572,8 +550,8 @@ const deleteAllRequests = async () => {
                       <tr>
   <th>Status</th>
   <td>
-    {selectedRequest?.detailedStatus || 'No Status Available'}
-  </td>
+  {selectedRequest?.status === 0 ? 'No Status Available' : selectedRequest?.detailedStatus || 'No Status Available'}
+</td>
 </tr>
 <tr>
   <th>Remarks</th>
@@ -687,17 +665,17 @@ const deleteAllRequests = async () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Philgeps Reference Number <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    name="philgepsReferenceNumber"
-                    value={requestForm.philgepsReferenceNumber}
-                    onChange={handleInputChange}
-                    placeholder="Philgeps reference number or NA"
-                    className={errors.philgepsReferenceNumber ? 'input-error' : ''}
-                  />
-                  {errors.philgepsReferenceNumber && <p className="error-text">{errors.philgepsReferenceNumber}</p>}
-                </div>
+      <label>Philgeps Reference Number</label> {/* Removed required asterisk */}
+      <input
+        type="text"
+        name="philgepsReferenceNumber"
+        value={requestForm.philgepsReferenceNumber}
+        onChange={handleInputChange}
+        placeholder="Philgeps reference number (optional)"
+        className={errors.philgepsReferenceNumber ? 'input-error' : ''}
+      />
+      {errors.philgepsReferenceNumber && <p className="error-text">{errors.philgepsReferenceNumber}</p>}
+    </div>
               </div>
 
               <div className="form-row">

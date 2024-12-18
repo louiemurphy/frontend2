@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './AllRequests.css';
+import { useNavigate } from 'react-router-dom';
 
 function AllRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,7 +16,6 @@ function AllRequests() {
           throw new Error('Failed to fetch requests');
         }
         const data = await response.json();
-        console.log(data); /// Log the response to verify structure
         setRequests(data);
       } catch (err) {
         setError(err.message);
@@ -25,26 +26,38 @@ function AllRequests() {
 
     fetchData();
   }, []);
+  
+  const handleBackToHome = () => {
+    navigate('/dashboard/admin');
+  };
 
-  const downloadFile = (fileUrl, fileName) => {
-    fetch(fileUrl, { method: 'GET' })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName || 'downloaded_file'; /// Use provided file name or a generic name
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url); // Clean up
-      })
-      .catch(err => console.error('File download failed:', err));
+  // Updated download function to match AdminDashboard implementation
+  const downloadFile = async (fileUrl, fileName) => {
+    try {
+      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download file');
+      }
+
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', fileName || 'downloaded_file');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      alert('Failed to download file. Please try again.');
+    }
   };
 
   if (loading) {
@@ -59,6 +72,12 @@ function AllRequests() {
     <div className="all-requests-fullscreen">
       <div className="all-requests-page">
         <h2 className="all-requests-title">All Requests</h2>
+        <button 
+          className="sidebar-back-to-home-button" 
+          onClick={handleBackToHome}
+        >
+          ← Back to Home
+        </button>
         <div className="all-requests-table-wrapper">
           <table className="all-requests-table">
             <thead>
@@ -94,19 +113,19 @@ function AllRequests() {
                     <td>{request.dateNeeded}</td>
                     <td>{request.specialInstructions}</td>
                     <td>
-                      {request.requesterFileName ? (
+                      {request.requesterFileUrl ? (
                         <button onClick={() => downloadFile(request.requesterFileUrl, request.requesterFileName)}>
                           Download File
                         </button>
                       ) : 'N/A'}
                     </td>
                     <td>
-                    {request.fileName? (
-                      <button onClick={() => downloadFile(request.fileUrl, request.fileName)}>
-                        Download File
-                      </button>
-                    ) : 'N/A'}
-                  </td>
+                      {request.fileUrl ? (
+                        <button onClick={() => downloadFile(request.fileUrl, request.fileName)}>
+                          Download File
+                        </button>
+                      ) : 'N/A'}
+                    </td>
                   </tr>
                 ))
               ) : (

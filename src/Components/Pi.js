@@ -1,26 +1,23 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Upload } from 'lucide-react';
 import './PiMonitoringForm.css';
 
 const DEPARTMENTS = [
-  'Purchasing',
-  'Logistics',
+  'Isd',
+  'Warehouse',
   'Finance',
   'Operations',
-  'Procurement',
-  'Supply Chain',
-  'Inventory Management',
-  'Vendor Relations'
+  'logistics',
 ];
 
 // FormField Component
-const FormField = ({ label, type, name, required, options, placeholder }) => {
+const FormField = ({ label, type, name, options, placeholder, fileType, onFileChange }) => {
   const renderInput = () => {
     switch (type) {
       case 'select':
         return (
           <div className="relative">
-            <select name={name} required={required} className="form-input">
+            <select name={name}  className="form-input">
               <option value="">{placeholder || 'Select an option'}</option>
               {options.map((option) => (
                 <option key={option} value={option}>
@@ -32,16 +29,30 @@ const FormField = ({ label, type, name, required, options, placeholder }) => {
           </div>
         );
       case 'textarea':
-        return <textarea name={name} required={required} className="form-input" rows={2} placeholder={placeholder} />;
+        return <textarea name={name}  className="form-input" rows={2} placeholder={placeholder} />;
+      case 'file':
+        return (
+          <div className="file-input-wrapper">
+            <input 
+              type="file" 
+              name={name} 
+               
+              className="file-input" 
+              accept={fileType || '*'}
+              onChange={onFileChange}
+            />
+            
+          </div>
+        );
       default:
-        return <input type={type} name={name} required={required} className="form-input" placeholder={placeholder} />;
+        return <input type={type} name={name}  className="form-input" placeholder={placeholder} />;
     }
   };
 
   return (
     <div className="form-field">
       <label className="form-label">
-        {label}{required && <span className="required-marker">*</span>}
+        {label}
       </label>
       {renderInput()}
     </div>
@@ -51,39 +62,53 @@ const FormField = ({ label, type, name, required, options, placeholder }) => {
 function PiMonitoringForm() {
   const [showForm, setShowForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [files, setFiles] = useState({
+    bankSlip: null,
+    acknowledgmentSupplier: null,
+    balanceBankSlip: null,
+    balanceAcknowledgmentSupplier: null
+  });
 
   const toggleForm = () => setShowForm(!showForm);
+
+  const handleFileChange = (name) => (event) => {
+    setFiles(prevFiles => ({
+      ...prevFiles,
+      [name]: event.target.files[0]
+    }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
   
     try {
-      // Construct form data
-      const formDataObject = {};
-      const formElements = event.target.elements;
+      const formData = new FormData();
       
+      // Collect form elements
+      const formElements = event.target.elements;
       for (let element of formElements) {
-        if (element.name && element.type !== 'file') {
-          formDataObject[element.name] = element.value;
+        if (element.name) {
+          // Add ALL form fields, even if they're empty
+          // This allows partial submissions
+          if (element.type !== 'file') {
+            formData.append(element.name, element.value || '');
+          }
         }
       }
   
-      // DEBUGGING: Log the full URL and data
-      const FULL_URL = 'http://193.203.162.228:5000/api/pi-monitoring';
-      console.log('Full URL:', FULL_URL);
-      console.log('Submitting data:', JSON.stringify(formDataObject, null, 2));
-  
-      const response = await fetch(FULL_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formDataObject),
+      // Add file fields
+      Object.entries(files).forEach(([key, file]) => {
+        if (file) {
+          formData.append(key, file);
+        }
       });
   
-      console.log('Response status:', response.status);
-      console.log('Response headers:', Object.fromEntries(response.headers));
+      const FULL_URL = 'http://localhost:5000/api/pi-monitoring';
+      const response = await fetch(FULL_URL, {
+        method: 'POST',
+        body: formData,
+      });
   
       if (!response.ok) {
         const errorText = await response.text();
@@ -93,9 +118,15 @@ function PiMonitoringForm() {
   
       const result = await response.json();
       console.log('Success:', result);
-      alert('Form submitted successfully!');
+      alert('Form submitted successfully, even with partial data!');
   
       event.target.reset();
+      setFiles({
+        bankSlip: null,
+        acknowledgmentSupplier: null,
+        balanceBankSlip: null,
+        balanceAcknowledgmentSupplier: null
+      });
       setShowForm(false);
     } catch (error) {
       console.error('Detailed error:', error);
@@ -105,13 +136,12 @@ function PiMonitoringForm() {
     }
   };
 
-  // Fields for Deposit Title section
+  // Update fields to include file upload for specific fields
   const depositFields = [
     { 
       label: 'Supplier Info', 
       type: 'text', 
       name: 'supplierInfo', 
-      required: true, 
       placeholder: 'Enter supplier info' 
     },
     { 
@@ -119,7 +149,6 @@ function PiMonitoringForm() {
       type: 'select', 
       name: 'department', 
       options: DEPARTMENTS,
-      required: true, 
       placeholder: 'Select department'
     },
     { 
@@ -156,7 +185,6 @@ function PiMonitoringForm() {
       label: 'Invoice Number', 
       type: 'text', 
       name: 'invoiceNumber', 
-      required: true, 
       placeholder: 'Enter invoice number' 
     },
     { 
@@ -169,47 +197,57 @@ function PiMonitoringForm() {
       label: 'Total Amount', 
       type: 'number', 
       name: 'totalAmount', 
-      required: true, 
       placeholder: 'Enter total amount' 
     },
     { 
       label: 'Amount', 
       type: 'number', 
-      name: 'amount', 
-      required: true, 
+      name: 'amount',  
       placeholder: 'Enter amount' 
     },
     { 
       label: 'Bank', 
       type: 'text', 
       name: 'bank', 
-      required: true, 
       placeholder: 'Enter bank name' 
     },
     { 
       label: 'Bank Slip', 
-      type: 'text', 
+      type: 'file', 
       name: 'bankSlip', 
-      required: true 
+      placeholder: 'Upload bank slip',
+      fileType: '.pdf,.jpg,.jpeg,.png',
+      onFileChange: handleFileChange('bankSlip')
     },
     { 
       label: 'Acknowledgment of Supplier', 
-      type: 'text', 
+      type: 'file', 
       name: 'acknowledgmentSupplier', 
-      required: true 
+      placeholder: 'Upload supplier acknowledgment',
+      fileType: '.pdf,.jpg,.jpeg,.png',
+      onFileChange: handleFileChange('acknowledgmentSupplier')
     },
   ];
 
   // Fields for Balance Title section
   const balanceFields = [
-    { label: 'Amount', type: 'number', name: 'balanceAmount', required: true, placeholder: 'Enter amount' },
-    { label: 'Bank', type: 'text', name: 'balanceBank', required: true, placeholder: 'Enter bank name' },
-    { label: 'Balance Bank Slip', type: 'text', name: 'balanceBankSlip', required: true },
+    { label: 'Amount', type: 'number', name: 'balanceAmount',  placeholder: 'Enter amount' },
+    { label: 'Bank', type: 'text', name: 'balanceBank',  placeholder: 'Enter bank name' },
+    { 
+      label: 'Balance Bank Slip', 
+      type: 'file', 
+      name: 'balanceBankSlip', 
+      placeholder: 'Upload balance bank slip',
+      fileType: '.pdf,.jpg,.jpeg,.png',
+      onFileChange: handleFileChange('balanceBankSlip')
+    },
     { 
       label: 'Acknowledgment of Supplier', 
-      type: 'text', 
+      type: 'file', 
       name: 'balanceAcknowledgmentSupplier', 
-      required: true
+      placeholder: 'Upload balance supplier acknowledgment',
+      fileType: '.pdf,.jpg,.jpeg,.png',
+      onFileChange: handleFileChange('balanceAcknowledgmentSupplier')
     },
     { label: 'Loading Date', type: 'date', name: 'loadingDate', placeholder: 'Select loading date' },
     { label: 'Container Type', type: 'text', name: 'containerType', placeholder: 'Enter container type' },
@@ -217,12 +255,16 @@ function PiMonitoringForm() {
     { label: 'Departure Date', type: 'date', name: 'departureDate', placeholder: 'Select departure date' },
     { label: 'Date of Arrival', type: 'date', name: 'arrivalDate', placeholder: 'Select arrival date' },
     { label: 'Delivery Date at Warehouse', type: 'date', name: 'deliveryDate', placeholder: 'Select delivery date' },
-    { 
-      label: 'Photos of Unloading', 
-      type: 'text', 
-      name: 'photosUnloading', 
-      placeholder: 'Enter photo URLs or descriptions' 
-    },
+
+
+    {
+      label: 'Photos of Unloading',
+      type: 'file',
+      name: 'photosUnloading',
+      placeholder: 'Enter photo URLs or descriptions', // Missing comma added here
+      fileType: '.pdf,.jpg,.jpeg,.png',
+      onFileChange: handleFileChange('photosUnloading')
+    }    
   ];
 
   return (

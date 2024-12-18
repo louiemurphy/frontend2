@@ -1,67 +1,119 @@
-import React from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { FaTachometerAlt, FaUserFriends, FaListAlt, FaWarehouse, FaPlus, FaSignOutAlt, FaChartLine } from 'react-icons/fa';
-import './Sidebar.css';
+  import React from 'react';
+  import { useNavigate, useLocation, Link } from 'react-router-dom';
+  import { FaHistory } from 'react-icons/fa';
+  import { 
+    FaTachometerAlt, 
+    FaUserFriends, 
+    FaListAlt, 
+    FaWarehouse, 
+    FaPlus, 
+    FaSignOutAlt, 
+    FaChartLine, 
+    FaTable 
+  } from 'react-icons/fa';
+  import './Sidebar.css';
 
-function Sidebar() {
-  const navigate = useNavigate();
-  const location = useLocation(); 
+  function Sidebar() {
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  return (
-    <div className="sidebar">
-      <h3 className="sidebar-title">MENU</h3>
-      <ul className="menu-list">
-        <li
-          className={`menu-item ${location.pathname === '/dashboard' ? 'active' : ''}`}
-          onClick={() => navigate('/dashboard')}
-        >
-          <FaTachometerAlt className="menu-icon" />
-          Dashboard
-        </li>
-        <li
-          className={`menu-item ${location.pathname === '/profiles' ? 'active' : ''}`}
-          onClick={() => navigate('/profiles')}
-        >
-          <FaUserFriends className="menu-icon" />
-          All Profiles
-        </li>
-        <li
-          className={`menu-item ${location.pathname === '/all-requests' ? 'active' : ''}`}
-          onClick={() => navigate('/all-requests')}
-        >
-          <FaListAlt className="menu-icon" />
-          All Request
-        </li>
-        <li
-          className={`menu-item ${location.pathname === '/supplier-master-list' ? 'active' : ''}`}
-          onClick={() => navigate('/supplier-master-list')}
-        >
-          <FaPlus className="menu-icon" />
-          Create List
-        </li>
-        <li
-          className={`menu-item ${location.pathname === '/list' ? 'active' : ''}`}
-          onClick={() => navigate('/list')}
-        >
-          <FaWarehouse className="menu-icon" />
-          Supplier List
-        </li>
-        <li
-          className={`menu-item ${location.pathname === '/pi-monitoring' ? 'active' : ''}`}
-          onClick={() => navigate('/pi-monitoring')}
-        >
-          <FaChartLine className="menu-icon" />
-          PI Monitoring
-        </li>
-        <li className="menu-item2">
-          <FaSignOutAlt className="icon" />
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            Logout
-          </Link>
-        </li>
-      </ul>
-    </div>
-  );
-}
+    // Helper function to determine if a path is active
+    const isActive = (path) => location.pathname === path ? 'active' : '';
 
-export default Sidebar;
+    // Sidebar menu item component
+    const MenuItem = ({ icon, text, path, onClick }) => (
+      <li 
+        className={`menu-item ${isActive(path)}`}
+        onClick={() => onClick(path)}
+      >
+        {React.cloneElement(icon, { className: 'menu-icon' })}
+        {text}
+      </li>
+    );
+
+    // Sidebar section component
+    const SidebarSection = ({ title, children }) => (
+      <div className="sidebar-section">
+        <h4 className="section-title">{title}</h4>
+        <ul className="section-menu">
+          {children}
+        </ul>
+      </div>
+    );
+
+    return (
+      <div className="sidebar">
+        <h3 className="sidebar-title">Dashboard</h3>
+
+        <SidebarSection title="Admin">
+          <MenuItem 
+            icon={<FaTachometerAlt />} 
+            text="Dashboard" 
+            path="/dashboard"
+            onClick={navigate}
+          />
+          <MenuItem 
+            icon={<FaUserFriends />} 
+            text="Evaluators Profile" 
+            path="/profiles"
+            onClick={navigate}
+          />
+          <MenuItem 
+            icon={<FaListAlt />} 
+            text="Request List" 
+            path="/all-requests"
+            onClick={navigate}
+          />
+        </SidebarSection>
+
+        <SidebarSection title="Supplier">
+          <MenuItem 
+            icon={<FaPlus />} 
+            text="Create List" 
+            path="/supplier-master-list"
+            onClick={navigate}
+          />
+          <MenuItem 
+            icon={<FaWarehouse />} 
+            text="Supplier List" 
+            path="/list"
+            onClick={navigate}
+          />
+        </SidebarSection>
+
+        <SidebarSection title="Monitoring">
+          <MenuItem 
+            icon={<FaChartLine />} 
+            text="Create Pi Entry" 
+            path="/pi-monitoring"
+            onClick={navigate}
+          />
+          <MenuItem 
+            icon={<FaTable />} 
+            text="Monitoring List" 
+            path="/monitoring-tables"
+            onClick={navigate}
+          />
+            <MenuItem 
+            icon={<FaHistory />} 
+            text="Monitoring Logs" 
+            path="/monitoring-logs"
+            onClick={navigate}
+          />
+        </SidebarSection>
+
+        <div className="sidebar-logout">
+          <li className="menu-item2">
+            <FaSignOutAlt className="icon" />
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              Logout
+            </Link>
+          </li>
+        </div>
+        
+
+      </div>
+    );
+  }
+
+  export default Sidebar;

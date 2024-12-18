@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';  // Using axios for HTTP requests
 import moment from 'moment'; // To format timestamps
 import './List.css'; // Import your styles
+import { useNavigate } from 'react-router-dom';
 
 function List() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const handleBackToHome = () => {
+    navigate('/dashboard/admin');  // Updated to match the exact admin dashboard route
+  };
+  const navigate = useNavigate();
 
   // Fetch supplier data when the component mounts
   useEffect(() => {
@@ -64,7 +69,12 @@ function List() {
     <div className="supplier-list-fullscreen">
       <div className="supplier-list-page">
         <h2 className="supplier-list-title">Supplier Master List</h2>
-
+        <button 
+          className="sidebar-back-to-home-button" 
+          onClick={handleBackToHome}
+        >
+          ← Back to Home
+        </button>
         <div className="supplier-table-wrapper">
           <div className="supplier-table">
             {/* Render table headers dynamically */}
