@@ -35,7 +35,7 @@ body, html {
 .profile-image-container4 {
   width: 160px;
   height: 160px;
-  border: 4px solid #1a73e8;
+  border: 4px solid #1a1de8;
   border-radius: 50%;
   background-color: #e9ecef;
   overflow: hidden;
@@ -160,7 +160,7 @@ body, html {
   .status-value4 {
     font-size: 28px;
     font-weight: bold;
-    color: #007bff;
+    color: #000000;
     margin-bottom: 12px;
   }
   
@@ -276,93 +276,97 @@ body, html {
   }
   
   /* Modal Styles */
-  .modal4 {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.8); /* Darker background for better visibility */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    width: 100vw; /* Full width */
-    height: 100vh; /* Full height */
-  }
-  
-  /* Modal Content: full screen with padding */
-  .modal-content4 {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    width: 100vw; /* Reduced width to 80% */
-    height: 100vh; /* Reduced height to 80% */
-    overflow-y: auto; /* Scrollable if content overflows */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3); /* Deep shadow for emphasis */
-  }
-  
-  .modal-header4 {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333; /* Darker text for clarity */
-  }
-  
-  /* Modal Table */
-  .modal-table4 {
-    width: 100%; /* Keep the width to fill the modal */
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-size: 14px; /* Reduced font size for table content */
-  }
-  
-  .modal-table4 th,
-  .modal-table4 td {
-    padding: 8px 12px; /* Reduced padding for smaller spacing */
-    border: 1px solid #ddd;
-    text-align: left;
-  }
-  
-  .modal-table4 th {
-    background-color: #f2f2f2;
-    font-weight: bold;
-    color: #333; /* Better contrast for headers */
-  }
-  
-  /* Button Styling */
-  .modal-table4 td button {
-    padding: 6px 12px; /* Reduced padding for buttons */
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  .modal-table4 td button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Upload button and input styling */
-  .modal-table4 td input[type="file"] {
-    padding: 5px;
-    margin-bottom: 10px;
-  }
-  
-  .modal-table4 td button[type="upload"] {
-    margin-top: 10px;
-    padding: 6px 12px; /* Reduced padding for the upload button */
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  .modal-table4 td button[type="upload"]:hover {
-    background-color: #218838;
-  }
-  
+.modal4 {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8); /* Background overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+}
+
+/* Modal Content: Full screen */
+.modal-content4 {
+  background-color: white;
+  padding: 20px; /* Slightly reduced padding */
+  border-radius: 10px;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow-y: auto; /* Scrollable if content overflows */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Header: Smaller font size */
+.modal-header4 {
+  font-size: 16px; /* Smaller font size for header */
+  font-weight: bold;
+  margin-bottom: 10px; /* Slightly reduced margin */
+  color: #333;
+}
+
+/* Modal Table: Smaller text and spacing */
+.modal-table4 {
+  width: 100%; /* Full width for table */
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  font-size: 12px; /* Smaller font size for table content */
+}
+
+.modal-table4 th,
+.modal-table4 td {
+  padding: 6px 8px; /* Reduced padding */
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.modal-table4 th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Buttons: Smaller size */
+.modal-table4 td button {
+  padding: 5px 8px; /* Smaller padding for buttons */
+  font-size: 12px; /* Smaller font size */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.modal-table4 td button:hover {
+  background-color: #0056b3;
+}
+
+/* File Upload and Input: Adjusted size */
+.modal-table4 td input[type="file"] {
+  padding: 4px; /* Reduced padding */
+  font-size: 12px; /* Smaller font size */
+  margin-bottom: 8px;
+}
+
+.modal-table4 td button[type="upload"] {
+  margin-top: 8px;
+  padding: 5px 8px; /* Smaller padding */
+  font-size: 12px; /* Smaller font size */
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.modal-table4 td button[type="upload"]:hover {
+  background-color: #218838;
+}
+
   /* Close button styling */
   .close-modal-btn {
     padding: 8px 16px; /* Reduced padding */
@@ -444,26 +448,26 @@ body, html {
 }
 
 .status-pending {
-  background-color: #fff3cd;
-  color: #856404;
+  background-color: #e1af0a;
+  color: black;
   border-color: #ffeeba;
 }
 
 .status-ongoing {
-  background-color: #cce5ff;
-  color: #004085;
+  background-color: #0b73e2;
+  color: black;
   border-color: #b8daff;
 }
 
 .status-completed {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: #0bb933;
+  color: black;
   border-color: #c3e6cb;
 }
 
 .status-canceled {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #f03220;
+  color: black;
   border-color: #f5c6cb;
 }
 

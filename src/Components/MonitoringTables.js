@@ -27,7 +27,7 @@ const MonitoringTables = () => {
   const fetchPiEntries = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://193.203.162.228:5000/api/pi-monitoring');
+      const response = await fetch('http://localhost:5000/api/pi-monitoring');
       if (!response.ok) {
         throw new Error('Failed to fetch PI monitoring entries');
       }
@@ -43,7 +43,7 @@ const MonitoringTables = () => {
 
   const handleDownloadFile = (filePath) => {
     if (filePath) {
-      window.open(`http://193.203.162.228:5000/${filePath}`, '_blank');
+      window.open(`http://localhost:5000/${filePath}`, '_blank');
     }
   };
 
@@ -58,7 +58,7 @@ const MonitoringTables = () => {
   const handleDeleteEntry = async (id) => {
     if (window.confirm('Are you sure you want to delete this entry?')) {
       try {
-        const response = await fetch(`http://193.203.162.228:5000/api/pi-monitoring/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/pi-monitoring/${id}`, {
           method: 'DELETE',
         });
   
@@ -111,7 +111,7 @@ const MonitoringTables = () => {
       // Append _id for identification
       formData.append('_id', selectedEntry._id);
 
-      const response = await fetch(`http://193.203.162.228:5000/api/pi-monitoring/${selectedEntry._id}`, {
+      const response = await fetch(`http://localhost:5000/api/pi-monitoring/${selectedEntry._id}`, {
         method: 'PUT',
         body: formData,
       });

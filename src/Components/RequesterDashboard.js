@@ -36,7 +36,6 @@ function RequesterDashboard() {
     status: 0,
   });
   
-  
   const [errors, setErrors] = useState({}); // To store form errors
 
   // Mock data for dropdowns (same as before)
@@ -157,7 +156,6 @@ function RequesterDashboard() {
     const handlePreviousPage = () => {
       if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
-
     // Validate form inputs
     const validateForm = () => {
       const newErrors = {};
@@ -272,11 +270,7 @@ const handleSubmit = async (e) => {
       alert('Error submitting request. Please try again.');
     }
   }
-};
-
-
-
-    
+};  
   const resetForm = () => {
     setRequestForm({
       email: '',
@@ -361,10 +355,6 @@ const handleSubmit = async (e) => {
     </li>
   </ul>
 </div>
-
-
-
-
           <div className="main-content">
             <div className="top-metrics">
               <div className="card">
@@ -452,7 +442,6 @@ const handleSubmit = async (e) => {
     hour12: true,  // 12-hour format with AM/PM
   })}
 </td>
-
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
@@ -475,9 +464,6 @@ const handleSubmit = async (e) => {
     </tr>
   ))}
 </tbody>
-
-
-
   </table>
 </div>
             </div>
@@ -613,7 +599,6 @@ const handleSubmit = async (e) => {
           {errors.name && <p className="error-text">{errors.name}</p>}
         </div>
       </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label>Type of Client <span className="required">*</span></label>
@@ -677,7 +662,6 @@ const handleSubmit = async (e) => {
       {errors.philgepsReferenceNumber && <p className="error-text">{errors.philgepsReferenceNumber}</p>}
     </div>
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label>Product Type <span className="required">*</span></label>
@@ -737,7 +721,6 @@ const handleSubmit = async (e) => {
                   {errors.specialInstructions && <p className="error-text">{errors.specialInstructions}</p>}
                 </div>
               </div>
-
               {/* File upload input */}
               <div className="form-row">
                 <div className="form-group">
@@ -754,5 +737,4 @@ const handleSubmit = async (e) => {
     </div>
   );
 }
-
 export default RequesterDashboard;

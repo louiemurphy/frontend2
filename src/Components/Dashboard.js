@@ -52,56 +52,62 @@ const Dashboard = () => {
 
   const processChartData = () => {
     const chartData = [];
-
+  
     filteredRequests.forEach((request) => {
       const requestDate = new Date(request.timestamp);
       const month = requestDate.toLocaleString('default', { month: 'short' });
-
-      let monthData = chartData.find(data => data.month === month);
+  
+      let monthData = chartData.find((data) => data.month === month);
       if (!monthData) {
         monthData = { month, delayed: 0, onTime: 0, total: 0, completed: 0 };
         chartData.push(monthData);
       }
-
+  
       monthData.total += 1;
+  
+      // Check if the request is completed
       if (request.status === 2) {
         monthData.completed += 1;
-      }
-
-      const dateNeeded = new Date(request.dateNeeded);
-      const completedAt = new Date(request.completedAt);
-
-      if (completedAt > dateNeeded) {
-        monthData.delayed += 1;
-      } else {
-        monthData.onTime += 1;
+  
+        const dateNeeded = new Date(request.dateNeeded);
+        const completedAt = new Date(request.completedAt);
+  
+        // Categorize as "on time" or "delayed" only if completed
+        if (completedAt > dateNeeded) {
+          monthData.delayed += 1;
+        } else {
+          monthData.onTime += 1;
+        }
       }
     });
-
+  
     return chartData;
   };
-
+  
   const chartData = processChartData();
 
   const calculateStats = () => {
-    const total = filteredRequests.length;
-    const completed = filteredRequests.filter((request) => request.status === 2).length;
-    const canceled = filteredRequests.filter((request) => request.status === 3).length;
+  const total = filteredRequests.length;
+  const completed = filteredRequests.filter((request) => request.status === 2).length;
 
-    const completionRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
-    const efficiencyRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
+  const onTime = filteredRequests.filter((request) => {
+    const dateNeeded = new Date(request.dateNeeded);
+    const completedAt = new Date(request.completedAt);
+    return request.status === 2 && completedAt <= dateNeeded; // Only on-time completions
+  }).length;
 
-    const delayed = filteredRequests.filter((request) => {
-      const dateNeeded = new Date(request.dateNeeded);
-      const completedAt = new Date(request.completedAt);
-      return completedAt > dateNeeded;
-    }).length;
+  const delayed = completed - onTime; // Completed tasks that are delayed
 
-    const delayedRate = total > 0 ? ((delayed / total) * 100).toFixed(2) : '0.00';
-    const canceledRate = total > 0 ? ((canceled / total) * 100).toFixed(2) : '0.00';
+  const canceled = filteredRequests.filter((request) => request.status === 3).length;
 
-    return { total, completionRate, efficiencyRate, delayedRate, canceledRate };
-  };
+  const efficiencyRate = total > 0 ? ((onTime / total) * 100).toFixed(2) : '0.00';
+  const delayedRate = total > 0 ? ((delayed / total) * 100).toFixed(2) : '0.00';
+  const canceledRate = total > 0 ? ((canceled / total) * 100).toFixed(2) : '0.00';
+  const completionRate = total > 0 ? ((completed / total) * 100).toFixed(2) : '0.00';
+
+  return { total, completionRate, efficiencyRate, delayedRate, canceledRate };
+};
+
 
   const handleBackToHome = () => {
     navigate('/dashboard/admin'); // Use navigate to go back to home page
@@ -118,128 +124,130 @@ const Dashboard = () => {
   const { total, completionRate, efficiencyRate, delayedRate, canceledRate } = calculateStats();
 
   return (
-    <div className="dashboard-container">
-      {/* Back button */}
-      <button 
-        className="sidebar-back-to-home-button" 
-        onClick={handleBackToHome}
-      >
-        ← Back to Home
-      </button>
-
-      <div className="month-filter">
-        <label>Filter by Month:</label>
-        <select
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
+    <div className="dashboard">
+      <div className="dashboard-container5">
+        {/* Back button */}
+        <button 
+          className="sidebar-back-to-home-button5" 
+          onClick={handleBackToHome}
         >
-          <option value="">All Months</option>
-          <option value="January">January</option>
-          <option value="February">February</option>
-          <option value="March">March</option>
-          <option value="April">April</option>
-          <option value="May">May</option>
-          <option value="June">June</option>
-          <option value="July">July</option>
-          <option value="August">August</option>
-          <option value="September">September</option>
-          <option value="October">October</option>
-          <option value="November">November</option>
-          <option value="December">December</option>
-        </select>
-      </div>
+          ← Back to Home
+        </button>
 
-      <div className="stats-container">
-        <div className="stat-box">
-          <h2>Total Requests</h2>
-          <FaQuestionCircle className="stat-icon" />
-          <p className="stat-value">{total}</p>
-          <div className="stat-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <Bar dataKey="total" fill="#4CAF50" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="month-filter5">
+          <label>Filter by Month:</label>
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          >
+            <option value="">All Months</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
         </div>
-        <div className="stat-box">
-          <h2>Completion Rate</h2>
-          <FaCheckCircle className="stat-icon" />
-          <p className="stat-value">{completionRate}%</p>
-          <div className="stat-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <Bar dataKey="completed" fill="#4CAF50" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="stat-box">
-          <h2>Efficiency Rate</h2>
-          <FaClock className="stat-icon" />
-          <p className="stat-value">{efficiencyRate}%</p>
-          <div className="stat-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <Bar dataKey="onTime" fill="#4CAF50" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="stat-box">
-          <h2>Delayed Rate</h2>
-          <FaExclamationCircle className="stat-icon" />
-          <p className="stat-value">{delayedRate}%</p>
-          <div className="stat-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <Bar dataKey="delayed" fill="#4CAF50" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        <div className="stat-box">
-          <h2>Canceled Rate</h2>
-          <FaBan className="stat-icon" />
-          <p className="stat-value">{canceledRate}%</p>
-          <div className="stat-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <Bar dataKey="canceled" fill="#4CAF50" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
 
-      <div className="charts-container">
-        <div className="chart-box">
-          <h2>Delayed vs On Time Requests</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="delayed" stroke="#FF9800" />
-              <Line type="monotone" dataKey="onTime" stroke="#4CAF50" />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="stats-container5">
+          <div className="stat-box5">
+            <h2>Total Requests</h2>
+            <FaQuestionCircle className="stat-icon5" />
+            <p className="stat-value5">{total}</p>
+            <div className="stat-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <Bar dataKey="total" fill="#4CAF50" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="stat-box5">
+            <h2>Completion Rate</h2>
+            <FaCheckCircle className="stat-icon5" />
+            <p className="stat-value5">{completionRate}%</p>
+            <div className="stat-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <Bar dataKey="completed" fill="#4CAF50" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="stat-box5">
+            <h2>Efficiency Rate</h2>
+            <FaClock className="stat-icon5" />
+            <p className="stat-value5">{efficiencyRate}%</p>
+            <div className="stat-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <Bar dataKey="onTime" fill="#4CAF50" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="stat-box5">
+            <h2>Delayed Rate</h2>
+            <FaExclamationCircle className="stat-icon5" />
+            <p className="stat-value5">{delayedRate}%</p>
+            <div className="stat-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <Bar dataKey="delayed" fill="#4CAF50" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="stat-box5">
+            <h2>Canceled Rate</h2>
+            <FaBan className="stat-icon5" />
+            <p className="stat-value5">{canceledRate}%</p>
+            <div className="stat-chart">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <Bar dataKey="canceled" fill="#4CAF50" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
-        <div className="chart-box">
-          <h2>Total Requests vs Completed Requests</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="total" stroke="#2196F3" />
-              <Line type="monotone" dataKey="completed" stroke="#4CAF50" />
-            </LineChart>
-          </ResponsiveContainer>
+
+        <div className="charts-container5">
+          <div className="chart-box5">
+            <h2>Delayed vs On Time Requests</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="delayed" stroke="#FF9800" />
+                <Line type="monotone" dataKey="onTime" stroke="#4CAF50" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="chart-box5">
+            <h2>Total Requests vs Completed Requests</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="total" stroke="#2196F3" />
+                <Line type="monotone" dataKey="completed" stroke="#4CAF50" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

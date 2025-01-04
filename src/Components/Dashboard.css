@@ -1,98 +1,161 @@
-  .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    padding: 20px;
-    background-color: white;
-    color: #333;
-    min-height: 100vh;
+.dashboard {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f9;
+  color: #444;
+  height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.dashboard-container5 {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  padding-top: 20px;
+  position: relative;
+}
+
+.sidebar-back-to-home-button5 {
+  background-color: #1f3b73; /* Deep blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.3s;
+}
+
+.sidebar-back-to-home-button5:hover {
+  background-color: #162a5c; /* Navy blue */
+}
+
+.month-filter5 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align to the right */
+  gap: 10px;
+  background-color: #1f3b73; /* Deep blue */
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #162a5c; /* Navy blue */
+  width: fit-content;
+}
+
+.month-filter5 label {
+  color: #fff; /* White text */
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.month-filter5 select {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff; /* White dropdown */
+  font-size: 14px;
+  color: #444; /* Neutral text color */
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.stats-container5 {
+  display: flex;
+  justify-content: space-between; /* Spread stats horizontally */
+  gap: 20px;
+  margin-bottom: 20px;
+  overflow-x: auto; /* Add scrolling for narrow screens */
+}
+
+.stat-box5 {
+  background-color: #ffffff; /* Pure white */
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  min-width: 200px; /* Set a minimum width for horizontal scroll */
+  flex: 1;
+}
+
+.stat-box5 h2 {
+  font-size: 16px;
+  color: #1f3b73; /* Deep blue */
+  margin: 0 0 15px 0;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.stat-icon5 {
+  font-size: 24px;
+  color: #1f3b73; /* Deep blue */
+  margin-bottom: 10px;
+}
+
+.stat-value5 {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #444; /* Neutral dark text */
+}
+
+.charts-container5 {
+  display: flex;
+  justify-content: space-between; /* Spread charts horizontally */
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Wrap charts to new lines for narrow screens */
+}
+
+.chart-box5 {
+  background-color: #f9f9fb; /* Very light gray */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  flex: 1;
+  min-width: 300px; /* Ensure charts have a minimum width */
+}
+
+.chart-box5 h2 {
+  font-size: 18px;
+  color: #1f3b73; /* Deep blue */
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .stats-container5 {
+    flex-wrap: wrap; /* Wrap stats to new lines */
+    gap: 15px;
   }
+}
 
-  .month-filter select {
-    padding: 5px 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    width: 140px;  /* Fixed width */
+@media (max-width: 900px) {
+  .stat-box5 {
+    min-width: 150px;
+    padding: 15px;
   }
-
-
-  .stats-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .stat-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    flex: 1;
-    min-width: 200px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .stat-box h2 {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 10px;
-  }
-
-  .stat-icon {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #4CAF50;
-  }
-
   .stat-value {
     font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
   }
+}
 
-  .stat-chart {
-    width: 100%;
-    height: 50px;
+@media (max-width: 600px) {
+  .stats-container5 {
+    flex-direction: column; /* Stack stats vertically for smaller screens */
   }
-
-  .charts-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+  .charts-container5 {
+    flex-direction: column; /* Stack charts vertically for smaller screens */
   }
-
-  .chart-box {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    flex: 1;
-    min-width: 300px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .chart-box h2 {
-    font-size: 18px;
-    color: #666;
-    margin-bottom: 20px;
-  }
-
-  @media (max-width: 768px) {
-    .stats-container {
-      flex-direction: column;
-    }
-
-    .stat-box {
-      width: 100%;
-    }
-
-    .charts-container {
-      flex-direction: column;
-    }
-
-    .chart-box {
-      width: 100%;
-    }
-  }
+}

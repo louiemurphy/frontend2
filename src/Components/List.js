@@ -18,7 +18,7 @@ function List() {
     const fetchSuppliers = async () => {
       setLoading(true); // Set loading to true
       try {
-        const response = await axios.get('http://193.203.162.228:5000/api/suppliers');
+        const response = await axios.get('http://localhost:5000/api/suppliers');
         
         // Log to debug and inspect the structure of the data
         console.log(response.data); // This will help you check if contactPerson exists

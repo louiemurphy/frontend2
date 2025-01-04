@@ -22,7 +22,7 @@ function Supplier() {
     const fetchSuppliers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://193.203.162.228:5000/api/suppliers');
+        const response = await axios.get('http://localhost:5000/api/suppliers');
         const formattedData = response.data.map((supplier) => ({
           ...supplier,
           timestamp: moment(supplier.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),
@@ -80,7 +80,7 @@ function Supplier() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://193.203.162.228:5000/api/suppliers', newSupplier);
+      const response = await axios.post('http://localhost:5000/api/suppliers', newSupplier);
       const formattedSupplier = {
         ...response.data,
         timestamp: moment(response.data.timestamp).local().format('MM/DD/YYYY, h:mm:ss A'),

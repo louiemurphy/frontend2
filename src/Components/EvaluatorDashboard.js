@@ -49,6 +49,25 @@ const getStatusClass = (status) => {
   }
 };
 
+const getLastRequestForEvaluator = () => {
+  if (requests.length > 0) {
+    // Sort requests by timestamp in descending order
+    const sortedRequests = [...requests].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    return new Date(sortedRequests[0].timestamp).toLocaleString('en-PH', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true, // 12-hour format
+    });
+  }
+  return "N/A";
+};
+
+
 // Update the getDetailedStatusClass function to handle empty status properly
 const getDetailedStatusClass = (detailedStatus) => {
   if (!detailedStatus || detailedStatus === 'pending') {
@@ -404,54 +423,72 @@ const handleStatusChanged = async (event) => {
     return (
       <div className="dashboard-container4">
         <div className="profile-sidebar4">
-        <div
-          className="profile-image-container4"
-          onClick={() => isEditing && document.getElementById('fileInput').click()}
-        >
-          <img className="profile-image4" src={profileImage} alt={teamMember} />
-          {isEditing && (
-            <div className="camera-icon-container">
-              <i className="fas fa-camera camera-icon"></i>
-            </div>
-          )}
-        </div>
-        <div className="profile-details4">
-          <h3>{teamMember}</h3>
-          
-          {isEditing ? (
-            <>
-              <input
-                id="fileInput"
-                type="file"
-                accept="image/*"
-                onChange={handleProfileImageChange}
-                style={{ display: 'none' }}
-              />
-              <button 
-                onClick={handleProfileUpload} 
-                style={{ display: 'block', marginTop: '10px' }}
-              >
-                Save Profile Image
-              </button>
-              <button 
-                onClick={() => setIsEditing(false)} 
-                style={{ display: 'block', marginTop: '10px' }}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <button 
-                onClick={() => setIsEditing(true)} 
-                style={{ display: 'block', marginTop: '10px' }}
-              >
-                Edit Profile
-              </button>
-            </>
-          )}
-        </div>
+  <div
+    className="profile-image-container4"
+    onClick={() => isEditing && document.getElementById('fileInput').click()}
+  >
+    <img className="profile-image4" src={profileImage} alt={teamMember} />
+    {isEditing && (
+      <div className="camera-icon-container">
+        <i className="fas fa-camera camera-icon"></i>
       </div>
+    )}
+  </div>
+  <div className="profile-details4">
+    <h3>{teamMember}</h3>
+
+    {isEditing ? (
+      <>
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          onChange={handleProfileImageChange}
+          style={{ display: 'none' }}
+        />
+        <button
+          onClick={handleProfileUpload}
+          style={{ display: 'block', marginTop: '10px' }}
+        >
+          Save Profile Image
+        </button>
+        <button
+          onClick={() => setIsEditing(false)}
+          style={{ display: 'block', marginTop: '10px' }}
+        >
+          Cancel
+        </button>
+      </>
+    ) : (
+      <>
+        <button
+          onClick={() => setIsEditing(true)}
+          style={{ display: 'block', marginTop: '10px' }}
+        >
+          Edit Profile
+        </button>
+      </>
+    )}
+
+    {/* Logout Button */}
+    <button
+      onClick={() => (window.location.href = '/')} // Redirects to "/"
+      style={{
+        display: 'block',
+        marginTop: '20px',
+        padding: '10px 15px',
+        backgroundColor: '#1d2d50',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+      }}
+    >
+      Logout
+    </button>
+  </div>
+</div>
+
 
 
         {/* Main Content Section */}
@@ -470,6 +507,11 @@ const handleStatusChanged = async (event) => {
               <span className="status-value4">{filteredRequests.filter(req => req.status === 2).length}</span>
               <h3>Closed Requests</h3>
             </div>
+            <div className="status-box4">
+             <h3>Last Request Added</h3>
+            <p>{getLastRequestForEvaluator()}</p>
+            </div>
+
           </div>
 
           {/* Table displaying the list of requests */}
@@ -643,42 +685,42 @@ const handleStatusChanged = async (event) => {
   <option value="ongoing">Ongoing</option>
 
   <optgroup label="Done - Approved">
-    <option value="done-system-sizing">Done - System Sizing</option>
-    <option value="done-request-approved">Done - Request Approved. For Schedule</option>
-    <option value="done-quotation-submitted">Done - Quotation submitted</option>
-    <option value="done-technical-docs-turnover">Done - Technical documents turnover done</option>
-    <option value="done-proposal-approved">Done - Proposal Approved! Proceed for submission</option>
-    <option value="done-survey-request-approved">Done - Survey request approved! arrangement done</option>
-    <option value="done-go-proceed-bidding">Done - Go, Proceed to bidding!</option>
-    <option value="done-go-suggest-negotiate">Done - Go, Suggest to Negotiate!</option>
-  </optgroup>
+    <option value="done-system-sizing">done-system-sizing</option>
+    <option value="done-request-approved">done-request-approved</option>
+    <option value="done-quotation-submitted">done-quotation-submitted</option>
+    <option value="done-technical-docs-turnover">done-technical-docs-turnover</option>
+    <option value="done-proposal-approved">done-proposal-approved</option>
+    <option value="done-survey-request-approved">done-survey-request-approved</option>
+    <option value="done-go-proceed-bidding">done-go-proceed-bidding</option>
+    <option value="done-go-suggest-negotiate">done-go-suggest-negotiate</option>
+</optgroup>
 
-  <optgroup label="Done - No Go">
-    <option value="done-no-go-supplier-acquisition">Done - No Go - Supplier Acquisition Problem</option>
-    <option value="done-no-go-bidding-team-directives">Done - No Go, Bidding Team Directives!</option>
-    <option value="done-no-go-certificate">Done - No Go, Unable to provide certificates!</option>
-    <option value="done-no-go-specifications">Done - No Go, Unable to meet specifications!</option>
-    <option value="done-no-go-short-lead-time">Done - No Go, Short Delivery Lead Time!</option>
-    <option value="done-no-go-breakeven">Done - No Go, Breakeven!</option>
-    <option value="done-no-go-profitability">Done - No Go, Below 20% Profitability!</option>
-    <option value="done-no-go-negative-profit">Done - No Go, Negative Profit!</option>
-  </optgroup>
+<optgroup label="Done - No Go">
+    <option value="done-no-go-supplier-acquisition">done-no-go-supplier-acquisition</option>
+    <option value="done-no-go-bidding-team-directives">done-no-go-bidding-team-directives</option>
+    <option value="done-no-go-certificate">done-no-go-certificate</option>
+    <option value="done-no-go-specifications">done-no-go-specifications</option>
+    <option value="done-no-go-short-lead-time">done-no-go-short-lead-time</option>
+    <option value="done-no-go-breakeven">done-no-go-breakeven</option>
+    <option value="done-no-go-profitability">done-no-go-profitability</option>
+    <option value="done-no-go-negative-profit">done-no-go-negative-profit</option>
+</optgroup>
 
-  <optgroup label="Done - Other">
-    <option value="done-suggest-buy-bid-docs">Done - Suggest to buy bid docs for further evaluation</option>
-    <option value="done-proposal-disapproved">Done - Proposal disapproved! Need further assessment</option>
-    <option value="done-unable-evaluate-late-request">Done - Unable to evaluate, late request!</option>
-    <option value="done-unable-evaluate-multiple-requests">Done - Unable to evaluate, multiple requests!</option>
-    <option value="done-unable-evaluate-insufficient-data">Done - Unable to evaluate, insufficient data!</option>
-  </optgroup>
+<optgroup label="Done - Other">
+    <option value="done-suggest-buy-bid-docs">done-suggest-buy-bid-docs</option>
+    <option value="done-proposal-disapproved">done-proposal-disapproved</option>
+    <option value="done-unable-evaluate-late-request">done-unable-evaluate-late-request</option>
+    <option value="done-unable-evaluate-multiple-requests">done-unable-evaluate-multiple-requests</option>
+    <option value="done-unable-evaluate-insufficient-data">done-unable-evaluate-insufficient-data</option>
+</optgroup>
 
-  <optgroup label="Cancelled">
-    <option value="cancelled-survey-request-denied">Cancelled - Survey Request Denied</option>
-    <option value="cancelled-not-our-expertise">Cancelled - Not Our Expertise</option>
-    <option value="cancelled-double-entry">Cancelled - Double Entry!</option>
-    <option value="cancelled-requester-cancelled">Cancelled - Requester cancelled the request!</option>
-    
-  </optgroup>
+<optgroup label="Cancelled">
+    <option value="cancelled-survey-request-denied">cancelled-survey-request-denied</option>
+    <option value="cancelled-not-our-expertise">cancelled-not-our-expertise</option>
+    <option value="cancelled-double-entry">cancelled-double-entry</option>
+    <option value="cancelled-requester-cancelled">cancelled-requester-cancelled</option>
+</optgroup>
+
 </select>
   </td>
 

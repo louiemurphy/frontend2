@@ -3,8 +3,6 @@ import './AdminDashboard.css';
 import Sidebar from './Sidebar';
 
 
-
-// Header Component
 function HeaderSection({ requests }) {
   return (
     <header className="header-section2">
@@ -28,14 +26,11 @@ function HeaderSection({ requests }) {
       }) 
     : 'N/A'}
 </p>
-
         </div>
       </div>
     </header>
   );
 }
-
-
 /// Status Summary Component - Updates based on filtered requests
 function StatusSummary({ requests }) {
   const total = requests.length;
@@ -196,11 +191,11 @@ function RequestList({
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
-        <select
-          value={request.status}
-          onChange={(e) => handleStatusChange(request._id, Number(e.target.value))}
-          onClick={(e) => e.stopPropagation()}
-          disabled={request.status === 2 || request.status === 3} // Disable for both completed and canceled
+      <select
+    value={request.status}
+    onChange={(e) => handleStatusChange(request._id, Number(e.target.value))}
+    onClick={(e) => e.stopPropagation()} // Only lock the dropdown for "Cancelled"
+ // Disable for both completed and canceled
         >
           <option value={0}>Pending</option>
           <option value={1}>Ongoing</option>
@@ -390,12 +385,6 @@ function AdminDashboard() {
       console.error('Error updating status:', err);
     }
   };
-  
-  
-  
-  
-  
-
   const openModal = (request) => {
     setSelectedRequest(request);
     setModalVisible(true);
@@ -550,9 +539,6 @@ const filteredRequests = requests.filter((request) => {
                       </button>
                     </td>
                   </tr>
-                  
-                  
-
                 )}
               </tbody>
             </table>
@@ -587,6 +573,7 @@ const filteredRequests = requests.filter((request) => {
             </div>
           </div>
         </div>
+        
       )}
     </div>
   );
