@@ -57,7 +57,7 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('http://localhost:5000/api/requests');
+      const response = await fetch('http://193.203.162.228:5000/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
@@ -195,7 +195,7 @@ const handleSubmit = async (e) => {
       };
 
       // Step 1: Create the request (backend handles referenceNumber generation)
-      const response = await fetch("http://localhost:5000/api/requests", {
+      const response = await fetch("http://193.203.162.228:5000/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData),
@@ -213,7 +213,7 @@ const handleSubmit = async (e) => {
         formData.append("file", selectedFile);
         formData.append("requestId", newRequest._id);
 
-        const uploadResponse = await fetch("http://localhost:5000/api/requester/upload", {
+        const uploadResponse = await fetch("http://193.203.162.228:5000/api/requester/upload", {
           method: "POST",
           body: formData,
         });
@@ -272,7 +272,7 @@ const resetForm = () => {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`http://localhost:5000${fileUrl}`, {
+      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type
@@ -708,3 +708,6 @@ const resetForm = () => {
   );
 }
 export default RequesterDashboard;
+
+
+

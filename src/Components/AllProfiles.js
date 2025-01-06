@@ -27,7 +27,7 @@ const AllProfiles = () => {
   useEffect(() => {
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/teamMembers/stats');
+        const response = await fetch('http://193.203.162.228:5000/api/teamMembers/stats');
         if (!response.ok) {
           throw new Error('Failed to fetch team members');
         }
