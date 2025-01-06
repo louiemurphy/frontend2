@@ -57,27 +57,26 @@ function RequesterDashboard() {
   const fetchRequests = async () => {
     try {
       setLoading(true); // Set loading state
-      const response = await fetch('http://193.203.162.228:5000/api/requests');
+      const response = await fetch('http://localhost:5000/api/requests');
       if (!response.ok) {
         throw new Error('Failed to fetch requests');
       }
       const data = await response.json();
   
-      // If no requests are returned, reset local states
+      // Reset local states if no requests are returned
       if (data.length === 0) {
-        setLastRefNumber(1);
-        saveLastRefNumberToLocalStorage(1);
-        localStorage.removeItem('requests');
+        localStorage.removeItem('requests'); // Remove requests from localStorage
       }
   
       setRequests(data); // Set fetched requests in the state
-      saveRequestsToLocalStorage(data); // Save fetched requests to local storage
+      saveRequestsToLocalStorage(data); // Save fetched requests to localStorage
       setLoading(false); // Set loading to false after data is fetched
     } catch (error) {
       setError(error.message); // Set error if there's a problem with the fetch
       setLoading(false); // Stop loading on error
     }
   };
+  
 
   const loadRequestsFromLocalStorage = () => {
     const storedRequests = JSON.parse(localStorage.getItem('requests')) || [];
@@ -176,117 +175,88 @@ function RequesterDashboard() {
     
 
 // Function to save the last reference number to localStorage
-const saveLastRefNumberToLocalStorage = (refNumber) => {
-  localStorage.setItem('lastRefNumber', refNumber);
-};
 
-// Function to get the last reference number from localStorage
-const getLastRefNumberFromLocalStorage = () => {
-  const savedRefNumber = localStorage.getItem('lastRefNumber');
-  return savedRefNumber ? parseInt(savedRefNumber, 10) : 0; // Default to 0 if not found
-};
 
 // Inside the useEffect for initialization
 useEffect(() => {
-  // Fetch requests from the server or localStorage
   fetchRequests();
   loadRequestsFromLocalStorage();
-
-  // Initialize lastRefNumber from localStorage or database
-  const savedLastRefNumber = getLastRefNumberFromLocalStorage();
-  setLastRefNumber(savedLastRefNumber);
-
 }, []);
+
 
 // Inside the handleSubmit function
 const handleSubmit = async (e) => {
   e.preventDefault();
-  
+
   if (validateForm()) {
     try {
-      // Generate new reference number based on the current state of requests
-      const newRefNumber = lastRefNumber + 1;
-      const formattedRefNumber = String(newRefNumber).padStart(4, '0');
-  
-      // Add reference number to the form data
-      const requestWithRef = {
+      const requestData = {
         ...requestForm,
-        referenceNumber: formattedRefNumber
       };
-  
-      // Step 1: Create the request first (without file data)
-      const response = await fetch('http://193.203.162.228:5000/api/requests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestWithRef),
+
+      // Step 1: Create the request (backend handles referenceNumber generation)
+      const response = await fetch("http://localhost:5000/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Failed to create request');
+        throw new Error("Failed to create request");
       }
-  
+
       const newRequest = await response.json();
-  
-      // After submitting the request, update the last reference number (state)
-      setLastRefNumber(newRefNumber);
-      saveLastRefNumberToLocalStorage(newRefNumber); // Save the new reference number to localStorage
-  
+
       // Step 2: Upload the file if a file is selected
       if (selectedFile) {
         const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('requestId', newRequest._id);
-  
-        const uploadResponse = await fetch('http://193.203.162.228:5000/api/requester/upload', {
-          method: 'POST',
+        formData.append("file", selectedFile);
+        formData.append("requestId", newRequest._id);
+
+        const uploadResponse = await fetch("http://localhost:5000/api/requester/upload", {
+          method: "POST",
           body: formData,
         });
-  
+
         if (!uploadResponse.ok) {
-          throw new Error('File upload failed');
+          throw new Error("File upload failed");
         }
-  
+
         const updatedRequest = await uploadResponse.json();
-  
         setRequests((prevRequests) => [updatedRequest, ...prevRequests]);
       } else {
         setRequests((prevRequests) => [newRequest, ...prevRequests]);
       }
-  
-      // Step 3: Sort requests by timestamp (descending) after adding
-      setRequests((prevRequests) =>
-        prevRequests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      );
-  
-      // Step 4: Save the updated requests to localStorage
-      saveRequestsToLocalStorage([...requests, newRequest]);
-  
-      // Step 5: Reset the form and close it
+
+      // Reset form and close it
       resetForm();
       setSelectedFile(null);
       setShowRequestForm(false); // Close the form
     } catch (error) {
-      console.error('Error submitting the request:', error);
-      alert('Error submitting request. Please try again.');
+      console.error("Error submitting the request:", error);
+      alert("Error submitting request. Please try again.");
     }
   }
-};  
-  const resetForm = () => {
-    setRequestForm({
-      email: '',
-      name: '',
-      typeOfClient: '',
-      classification: '',
-      projectTitle: '',
-      philgepsReferenceNumber: '',
-      productType: '',
-      requestType: '',
-      dateNeeded: '',
-      specialInstructions: '',
-      status: 0,
-    });
-    setSelectedFile(null); // Clear selected file
-  };
+};
+
+
+const resetForm = () => {
+  setRequestForm({
+    email: "",
+    name: "",
+    typeOfClient: "",
+    classification: "",
+    projectTitle: "",
+    philgepsReferenceNumber: "",
+    productType: "",
+    requestType: "",
+    dateNeeded: "",
+    specialInstructions: "",
+    status: 0,
+  });
+  setSelectedFile(null); // Clear selected file
+};
+
 
   const handleRowClick = (request) => {
     setSelectedRequest(request); // Set the selected request to be shown in the modal
@@ -302,7 +272,7 @@ const handleSubmit = async (e) => {
   
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
+      const response = await fetch(`http://localhost:5000${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf', // Adjust this according to your file type

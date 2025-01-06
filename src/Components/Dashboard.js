@@ -14,7 +14,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('http://193.203.162.228:5000/api/requests', { mode: 'cors' });
+        const response = await fetch('http://localhost:5000/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }

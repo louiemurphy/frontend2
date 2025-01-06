@@ -11,7 +11,7 @@ function AllRequests() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://193.203.162.228:5000/api/requests');
+        const response = await fetch('http://localhost:5000/api/requests');
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
@@ -34,7 +34,7 @@ function AllRequests() {
   // Updated download function to match AdminDashboard implementation
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
+      const response = await fetch(`http://localhost:5000${fileUrl}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf',
