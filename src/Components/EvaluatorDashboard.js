@@ -105,76 +105,77 @@ return 0; // Default to Pending
 
 // Update the handleStatusChanged function
 const handleStatusChanged = async (event) => {
-const newDetailedStatus = event.target.value;
-console.log('Selected detailed status:', newDetailedStatus);
+  const newDetailedStatus = event.target.value;
+  console.log('Selected detailed status:', newDetailedStatus);
 
-if (!selectedRequest || !selectedRequest._id) {
-  alert('No valid request selected');
-  return;
-}
-
-setIsLoading(true); // Add loading state
-try {
-  // Update detailed status
-  const detailedUpdateResponse = await fetch(
-    `http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateDetailedStatus`,
-    {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        detailedStatus: newDetailedStatus,
-        statusChangedAt: new Date().toISOString(),
-      }),
-    }
-  );
-
-  if (!detailedUpdateResponse.ok) {
-    const errorData = await detailedUpdateResponse.json();
-    console.error('Backend error:', errorData);
-    throw new Error(errorData.message || 'Failed to update detailed status');
+  if (!selectedRequest || !selectedRequest._id) {
+    alert('No valid request selected');
+    return;
   }
 
-  const updatedDetailedStatus = await detailedUpdateResponse.json();
+  setIsLoading(true); // Add loading state
+  try {
+    // First request: Update detailedStatus
+    const detailedUpdateResponse = await fetch(
+      `http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateDetailedStatus`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          detailedStatus: newDetailedStatus,
+          statusChangedAt: new Date().toISOString(),
+        }),
+      }
+    );
 
-  // Update main status
-  const newMainStatus = getMainStatus(newDetailedStatus);
-  const mainUpdateResponse = await fetch(
-    `http://193.203.162.228:5000/api/requests/${selectedRequest._id}`,
-    {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        status: newMainStatus,
-        completedAt: newMainStatus === 2 ? new Date().toISOString() : null,
-        canceledAt: newMainStatus === 3 ? new Date().toISOString() : null,
-        lastStatusUpdate: new Date().toISOString(),
-        previousStatus: selectedRequest.status,
-      }),
+    if (!detailedUpdateResponse.ok) {
+      const errorData = await detailedUpdateResponse.json();
+      console.error('Backend error:', errorData);
+      throw new Error(errorData.message || 'Failed to update detailed status');
     }
-  );
 
-  if (!mainUpdateResponse.ok) {
-    throw new Error('Failed to update main status');
+    const updatedDetailedStatus = await detailedUpdateResponse.json();
+
+    // Second request: Update main status
+    const newMainStatus = getMainStatus(newDetailedStatus);
+    const mainUpdateResponse = await fetch(
+      `http://193.203.162.228:5000/api/requests/${selectedRequest._id}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newMainStatus,
+          completedAt: newMainStatus === 2 ? new Date().toISOString() : null,
+          canceledAt: newMainStatus === 3 ? new Date().toISOString() : null,
+          lastStatusUpdate: new Date().toISOString(),
+          previousStatus: selectedRequest.status,
+        }),
+      }
+    );
+
+    if (!mainUpdateResponse.ok) {
+      throw new Error('Failed to update main status');
+    }
+
+    const finalUpdatedRequest = await mainUpdateResponse.json();
+
+    // Update state
+    setRequests((prevRequests) =>
+      prevRequests.map((req) =>
+        req._id === finalUpdatedRequest._id ? finalUpdatedRequest : req
+      )
+    );
+    setSelectedRequest(finalUpdatedRequest);
+
+    alert('Status updated successfully');
+  } catch (error) {
+    console.error('Error updating status:', error);
+    alert(`Failed to update status: ${error.message}`);
+  } finally {
+    setIsLoading(false); // Reset loading state
   }
-
-  const finalUpdatedRequest = await mainUpdateResponse.json();
-
-  // Update state
-  setRequests((prevRequests) =>
-    prevRequests.map((req) =>
-      req._id === finalUpdatedRequest._id ? finalUpdatedRequest : req
-    )
-  );
-  setSelectedRequest(finalUpdatedRequest);
-
-  alert('Status updated successfully');
-} catch (error) {
-  console.error('Error updating status:', error);
-  alert(`Failed to update status: ${error.message}`);
-} finally {
-  setIsLoading(false); // Reset loading state
-}
 };
+
 
 
   // Add this at the top of your component, right after your state declarations

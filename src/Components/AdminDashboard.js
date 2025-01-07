@@ -191,7 +191,7 @@ function RequestList({
       <td>{request.projectTitle}</td>
       <td>{request.assignedTo || 'Unassigned'}</td>
       <td>
-      <select
+        <select
     value={request.status}
     onChange={(e) => handleStatusChange(request._id, Number(e.target.value))}
     onClick={(e) => e.stopPropagation()} // Only lock the dropdown for "Cancelled"
@@ -269,7 +269,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const response = await fetch('http://http://193.203.162.228:5000/api/requests', { mode: 'cors' });
+        const response = await fetch('http://193.203.162.228:5000/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
