@@ -13,7 +13,7 @@ function EvaluatorDashboard() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const requestsPerPage = 5;
+  const requestsPerPage = 6;
 
   const [profileImage, setProfileImage] = useState("https://via.placeholder.com/150");
   const [profileFile, setProfileFile] = useState(null);

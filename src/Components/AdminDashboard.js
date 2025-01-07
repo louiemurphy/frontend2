@@ -266,7 +266,12 @@ function AdminDashboard() {
     return months[month];
   };
 
+ 
+
   useEffect(() => {
+    let intervalId = null;
+    let ws = null;
+  
     const fetchRequests = async () => {
       try {
         const response = await fetch('http://193.203.162.228:5000/api/requests', { mode: 'cors' });
@@ -274,14 +279,14 @@ function AdminDashboard() {
           throw new Error('Failed to fetch requests');
         }
         const data = await response.json();
-    
+  
         // Set initial status to 0 (Pending) and detailedStatus to 'Pending' if they are missing
-        const updatedRequests = data.map(request => ({
+        const updatedRequests = data.map((request) => ({
           ...request,
           status: request.status ?? 0, // Default to 0 (Pending) if not set
           detailedStatus: request.detailedStatus ?? 'Pending', // Default to 'Pending' if not set
         }));
-    
+  
         setRequests(updatedRequests);
         setLoading(false);
       } catch (err) {
@@ -290,8 +295,56 @@ function AdminDashboard() {
       }
     };
   
-    fetchRequests();
+    // Polling function for periodic updates
+    const startPolling = () => {
+      intervalId = setInterval(fetchRequests, 5000); // Poll every 5 seconds
+    };
+  
+    // WebSocket setup for real-time updates
+    const connectWebSocket = () => {
+      ws = new WebSocket('ws://193.203.162.228:5000');
+      
+      ws.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+  
+      ws.onmessage = (event) => {
+        try {
+          const updatedRequest = JSON.parse(event.data);
+  
+          // Update the local state with the new request
+          setRequests((prevRequests) =>
+            prevRequests.map((req) =>
+              req._id === updatedRequest._id ? updatedRequest : req
+            )
+          );
+        } catch (err) {
+          console.error('Error parsing WebSocket message:', err);
+        }
+      };
+  
+      ws.onerror = (err) => {
+        console.error('WebSocket error:', err);
+      };
+  
+      ws.onclose = () => {
+        console.log('WebSocket connection closed. Reconnecting in 5 seconds...');
+        setTimeout(connectWebSocket, 5000); // Attempt to reconnect after 5 seconds
+      };
+    };
+  
+    // Start both polling and WebSocket connection
+    fetchRequests(); // Fetch initial data
+    startPolling();
+    connectWebSocket();
+  
+    return () => {
+      // Cleanup on component unmount
+      if (intervalId) clearInterval(intervalId);
+      if (ws) ws.close();
+    };
   }, []);
+  
   
 
   const paginate = (pageNumber) => {

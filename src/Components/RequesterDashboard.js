@@ -193,8 +193,6 @@ const handleSubmit = async (e) => {
       const requestData = {
         ...requestForm,
       };
-
-      // Step 1: Create the request (backend handles referenceNumber generation)
       const response = await fetch("http://193.203.162.228:5000/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
