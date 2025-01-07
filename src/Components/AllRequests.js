@@ -31,7 +31,6 @@ function AllRequests() {
     navigate('/dashboard/admin');
   };
 
-  // Updated download function to match AdminDashboard implementation
   const downloadFile = async (fileUrl, fileName) => {
     try {
       const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
@@ -93,6 +92,7 @@ function AllRequests() {
                 <th>Request Type</th>
                 <th>Date Needed</th>
                 <th>Special Instructions</th>
+                <th>Status</th> {/* New Status Column */}
                 <th>From Requester</th>
                 <th>From Evaluator</th>
               </tr>
@@ -112,6 +112,7 @@ function AllRequests() {
                     <td>{request.requestType}</td>
                     <td>{request.dateNeeded}</td>
                     <td>{request.specialInstructions}</td>
+                    <td>{request.detailedStatus || 'Pending'}</td> {/* Display the Status */}
                     <td>
                       {request.requesterFileUrl ? (
                         <button onClick={() => downloadFile(request.requesterFileUrl, request.requesterFileName)}>
