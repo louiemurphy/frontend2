@@ -274,7 +274,7 @@ function AdminDashboard() {
   
     const fetchRequests = async () => {
       try {
-        const response = await fetch('http://193.203.162.228:5001/api/requests', { mode: 'cors' });
+        const response = await fetch('http://193.203.162.228:8080/api/requests', { mode: 'cors' });
         if (!response.ok) {
           throw new Error('Failed to fetch requests');
         }
@@ -297,12 +297,12 @@ function AdminDashboard() {
   
     // Polling function for periodic updates
     const startPolling = () => {
-      intervalId = setInterval(fetchRequests, 5001); // Poll every 5 seconds
+      intervalId = setInterval(fetchRequests, 8080); // Poll every 5 seconds
     };
   
     // WebSocket setup for real-time updates
     const connectWebSocket = () => {
-      ws = new WebSocket('ws://193.203.162.228:5001');
+      ws = new WebSocket('ws://193.203.162.228:8080');
       
       ws.onopen = () => {
         console.log('WebSocket connection established');
@@ -329,7 +329,7 @@ function AdminDashboard() {
   
       ws.onclose = () => {
         console.log('WebSocket connection closed. Reconnecting in 5 seconds...');
-        setTimeout(connectWebSocket, 5001); // Attempt to reconnect after 5 seconds
+        setTimeout(connectWebSocket, 8080); // Attempt to reconnect after 5 seconds
       };
     };
   
@@ -371,7 +371,7 @@ function AdminDashboard() {
       setRequests(updatedRequests);
 
       try {
-        const response = await fetch(`http://193.203.162.228:5001/api/requests/${selectedRequest._id}`, {
+        const response = await fetch(`http://193.203.162.228:8080/api/requests/${selectedRequest._id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
