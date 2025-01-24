@@ -117,7 +117,7 @@ const handleStatusChanged = async (event) => {
   try {
     // First request: Update detailedStatus
     const detailedUpdateResponse = await fetch(
-      `http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateDetailedStatus`,
+      `http://193.203.162.228:5001/api/requests/${selectedRequest._id}/updateDetailedStatus`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -139,7 +139,7 @@ const handleStatusChanged = async (event) => {
     // Second request: Update main status
     const newMainStatus = getMainStatus(newDetailedStatus);
     const mainUpdateResponse = await fetch(
-      `http://193.203.162.228:5000/api/requests/${selectedRequest._id}`,
+      `http://193.203.162.228:5001/api/requests/${selectedRequest._id}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -189,7 +189,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchRequests = async () => {
     try {
-      const response = await fetch('http://193.203.162.228:5000/api/requests');
+      const response = await fetch('http://193.203.162.228:5001/api/requests');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -237,7 +237,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`http://193.203.162.228:5000/api/teamMembers/${evaluatorId}`);
+        const response = await fetch(`http://193.203.162.228:5001/api/teamMembers/${evaluatorId}`);
         if (!response.ok) throw new Error('Failed to fetch profile data');
         const data = await response.json();
         if (data.profileImage) setProfileImage(`http://193.203.162.228:5000${data.profileImage}`);
@@ -313,7 +313,7 @@ useEffect(() => {
 
         if (!response.ok) throw new Error('Failed to upload profile image');
         const result = await response.json();
-        setProfileImage(`http://193.203.162.228:5000${result.filePath}`);
+        setProfileImage(`http://193.203.162.228:5001${result.filePath}`);
         alert('Profile image updated successfully!');
       } catch (error) {
         alert(`Profile upload failed: ${error.message}`);
@@ -348,7 +348,7 @@ useEffect(() => {
       formData.append('requestId', selectedRequest._id);
 
       try {
-        const response = await fetch('http://193.203.162.228:5000/api/upload', {
+        const response = await fetch('http://193.203.162.228:5001/api/upload', {
           method: 'POST',
           body: formData,
         });
@@ -372,7 +372,7 @@ useEffect(() => {
 
   const downloadFile = async (fileUrl, fileName) => {
     try {
-      const response = await fetch(`http://193.203.162.228:5000${fileUrl}`, {
+      const response = await fetch(`http://193.203.162.228:5001${fileUrl}`, {
         method: 'GET',
       });
 
@@ -836,7 +836,7 @@ className={`detailed-status-select ${getDetailedStatusClass(selectedRequest?.det
                 return;
               }
 
-              const response = await fetch(`http://193.203.162.228:5000/api/requests/${selectedRequest._id}/updateRemarks`, {
+              const response = await fetch(`http://193.203.162.228:5001/api/requests/${selectedRequest._id}/updateRemarks`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
